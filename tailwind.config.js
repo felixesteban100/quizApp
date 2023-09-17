@@ -9,11 +9,11 @@ export default {
       keyframes: {
         scaleInCenter: {
           '0%': {
-            transform: 'scale(0)',
-            opacity: '1'
+            // transform: 'scale(0)',
+            opacity: '0'
           },
           '100%': {
-            transform: 'scale(1)',
+            // transform: 'scale(1)',
             opacity: '1'
           }
         },
@@ -22,12 +22,12 @@ export default {
             opacity: '0'
           },
           '10%': {
-            transform: 'scale(1)',
+            // transform: 'scale(1)',
             opacity: '1'
           },
           '100%': {
-            transform: 'scale(0)',
-            opacity: '1'
+            // transform: 'scale(0)',
+            opacity: '0'
           }
         },
       },
