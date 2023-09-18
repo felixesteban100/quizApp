@@ -67,11 +67,12 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
         <div className="min-h-[90vh] flex flex-col justify-center items-center">
             <div className="text-4xl mb-5">Delete a Category</div>
             <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
-                <label className="input-group">
-                    <span>Categories by: {currentUserName}</span>
-                    {isLoadingCategoriesByUser ?
-                        <div className="loading loading-dots loading-lg"></div>
-                        :
+                {isLoadingCategoriesByUser ?
+                    <div className="mx-auto loading loading-dots loading-lg"></div>
+                    :
+                    <label className="input-group">
+                        <span>Categories by: {currentUserName}</span>
+
                         <select
                             className="select select-bordered w-full"
                             value={CategorySelectedId}
@@ -90,8 +91,8 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
                                 <div>Error fetching Categories...</div>
                             }
                         </select>
-                    }
-                </label>
+                    </label>
+                }
 
                 <div
                     className={`btn btn-error ${CategorySelectedId === "" ? "btn-disabled" : ""}`}

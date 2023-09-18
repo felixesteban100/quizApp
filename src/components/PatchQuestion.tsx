@@ -126,7 +126,32 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
         <div className="flex flex-col justify-center items-center">
             <div className="text-4xl mb-5">Patch a question</div>
             <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
-                <label className="input-group">
+                {isLoadingQuestionsByUser ?
+                    <span className="mx-auto loading loading-dots loading-lg"></span>
+                    :
+                    <label className="input-group">
+                        <span>Questions by: {currentUserName}</span>
+                        <select
+                            className="select select-bordered w-full"
+                            value={questionSelectedId}
+                            onChange={(e) => setQuestionSelectedId(e.target.value)}
+                            name="questionSelected"
+                        >
+                            <option value="" disabled>Select a category</option>
+                            {questionsByUser !== undefined && !isErrorQuestionsByUser ?
+                                questionsByUser.map((questionUser) => {
+                                    if (questionUser._id === questionSelectedId && question.question !== questionUser.question) setQuestion({ ...questionUser })
+                                    return (
+                                        <option key={questionUser._id} value={questionUser._id} >{questionUser.question}</option>
+                                    )
+                                })
+                                :
+                                <div>Error fetching questions...</div>
+                            }
+                        </select>
+                    </label>
+                }
+                {/* <label className="input-group">
                     <span>Questions by: {currentUserName}</span>
                     {isLoadingQuestionsByUser ?
                         <div className="loading loading-dots loading-lg"></div>
@@ -151,7 +176,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                             }
                         </select>
                     }
-                </label>
+                </label> */}
 
                 <label className="input-group">
                     <span>Question</span>
@@ -280,7 +305,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
 
 
                 <button
-                    className="w-[30%] btn btn-primary self-center normal-case"
+                    className={`w-[30%] btn btn-primary self-center normal-case ${questionSelectedId === "" ? "btn-disabled" : ""}`}
                     type="submit"
                 >
                     {loading ? <span className="loading loading-spinner loading-md"></span> : "Patch Question"}

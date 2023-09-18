@@ -65,19 +65,19 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
         <div className="min-h-[90vh] flex flex-col justify-center items-center">
             <div className="text-4xl mb-5">Delete a question</div>
             <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
-                <label className="input-group">
-                    <span>Questions by: {currentUserName}</span>
-                    <select
-                        className="select select-bordered w-full"
-                        value={questionSelectedId}
-                        onChange={(e) => setQuestionSelectedId(e.target.value)}
-                        name="questionSelected"
-                    >
-                        <option value="" disabled selected>Select a category</option>
-                        {isLoadingQuestionsByUser ?
-                            <span className="loading loading-dots loading-lg"></span>
-                            :
-                            questionsByUser !== undefined && !isErrorQuestionsByUser ?
+                {isLoadingQuestionsByUser ?
+                    <span className="mx-auto loading loading-dots loading-lg"></span>
+                    :
+                    <label className="input-group">
+                        <span>Questions by: {currentUserName}</span>
+                        <select
+                            className="select select-bordered w-full"
+                            value={questionSelectedId}
+                            onChange={(e) => setQuestionSelectedId(e.target.value)}
+                            name="questionSelected"
+                        >
+                            <option value="" disabled>Select a category</option>
+                            {questionsByUser !== undefined && !isErrorQuestionsByUser ?
                                 questionsByUser.map((questionUser) => {
                                     return (
                                         <option key={questionUser._id} value={questionUser._id} >{questionUser.question}</option>
@@ -85,10 +85,10 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
                                 })
                                 :
                                 <div>Error fetching questions...</div>
-                        }
-                    </select>
-                </label>
-
+                            }
+                        </select>
+                    </label>
+                }
                 <div
                     className={`btn btn-error ${questionSelectedId === "" ? "btn-disabled" : ""}`}
                     onClick={() => {

@@ -60,8 +60,6 @@ function App() {
     onError: (error) => console.log(error),
   })
 
-  console.log(`https://opentdb.com/api.php?amount=${amountOfQuestions}&category=${categoryId}&type=${type}&difficulty=${difficulty}`)
-
   const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories, refetch: refetchAllCategories } = useQuery<Category[]>({
     enabled: true,
     refetchOnMount: true,
@@ -95,9 +93,9 @@ function App() {
   })
 
   useEffect(() => {
+    if(authToken === "") setCategoryId(0)
     refetchAllCategories()
   }, [authToken])
-
 
   return (
     <div data-theme={theme} className='min-h-[100vh] transition-colors duration-700'>
@@ -184,7 +182,7 @@ function App() {
                 isError={isError}
               />
               :
-              null
+              <div>Error internet</div>
           }
         />
         <Route path="*" element={<Navigate to="/" />} />
