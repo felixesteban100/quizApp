@@ -26,7 +26,7 @@ function Home({ currentUserName, allCategories, isLoadingCategories, isErrorCate
     <div className='flex flex-col mx-auto justify-center items-center gap-5 py-10'>
       {/* <img className='h-[20vw] max-h-[10rem]' src="https://cdn-icons-png.flaticon.com/512/6193/6193558.png" alt="" /> */}
 
-      < div className='text-current text-2xl'>
+      <div className='text-current text-5xl animate-textShadowPopBr'>
         Welcome <span className='font-bold'>{currentUserName}</span>
       </div>
 

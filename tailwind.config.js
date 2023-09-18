@@ -30,10 +30,21 @@ export default {
             opacity: '0'
           }
         },
+        textShadowPopBr: {
+          '0%': {
+            textShadow: "0 0 theme('colors.primary'), 0 0 theme('colors.primary'), 0 0 theme('colors.primary'), 0 0 theme('colors.primary'), 0 0 theme('colors.primary'), 0 0 theme('colors.primary'), 0 0 theme('colors.primary'), 0 0 theme('colors.primary')",
+            transform: 'translateX(0) translateY(0)'
+          },
+          '100%': {
+            textShadow: "1px 1px theme('colors.primary'), 2px 2px theme('colors.primary'), 3px 3px theme('colors.primary'), 4px 4px theme('colors.primary'), 5px 5px theme('colors.primary'), 6px 6px theme('colors.primary'), 7px 7px theme('colors.primary'), 8px 8px theme('colors.primary')",
+            transform: 'translateX(-8px) translateY(-8px)'
+          }
+        },
       },
       animation: {
         'scaleInCenter': 'scaleInCenter 1s ease-in-out 1 forwards',
         'scaleOutCenter': 'scaleOutCenter 1s ease-in-out 1 forwards',
+        'textShadowPopBr': 'textShadowPopBr 5s both infinite',
       }
 
     },

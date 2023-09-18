@@ -119,11 +119,11 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
       className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center bg-base-300`}
     >
       <div className='flex flex-col w-[80%] justify-center items-center gap-2'>
-        <p className='text-md md:text-2xl'>Category: <span>{question.category + getEmojiByCategoryName(question.category)}</span></p>
-        <p className={`text-md md:text-2xl`}>
+        <p className='text-md md:text-2xl lg:text-3xl'>Category: <span>{question.category + getEmojiByCategoryName(question.category)}</span></p>
+        <p className={`text-md md:text-2xl lg:text-3xl`}>
           Difficulty: <span className={`font-semibold ${question.difficulty === "hard" ? 'text-error' : question.difficulty === "medium" ? 'text-warning' : 'text-success'}`}>{question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1, question.difficulty.length)} {getGeneralEmojiByDifficulty(question.difficulty)}</span>
         </p>
-        <p className='text-md md:text-2xl font-bold'>{currentQuestionIndex + 1}. {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(question.question))}</p>
+        <p className='my-5 text-md md:text-2xl lg:text-5xl font-bold'>{currentQuestionIndex + 1}. {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(question.question))}</p>
         {
           question.img && question.img.includes('http') ?
             <img className='rounded-md max-h-[20rem]' src={question.img} alt={question.question} />
@@ -133,17 +133,19 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
       </div>
       {
         checkAnswers ?
-          <div className='w-[80%] grid grid-cols-2 md:grid-cols-4 gap-2 mt-5'>
+          <div className='w-[80%] h-auto grid grid-cols-2 md:grid-cols-4 gap-2 mt-5'>
             {question.all_answers.map((answer) => {
               return (
                 <div
-                  // ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "btn btn-error" : "btn"}
                   className={`
-                      btn
-                      ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "btn-error" : ""}
-                      ${(answer === question.correct_answer) ? "btn-success" : ""}
+                      ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "bg-error" : ""}
+                      ${(answer === question.correct_answer) ? "bg-success" : ""}
                       capitalize
                       overflow-hidden
+                      text-md md:text-2xl lg:text-3xl
+                      flex justify-center text-center
+                      p-5
+                      rounded-md
                     `}
                   key={answer}
                 >
@@ -153,7 +155,7 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
             })}
           </div>
           :
-          <div className='w-[80%] h-auto grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 justify-center items-center'>
+          <div className='w-[80%] h-auto grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 justify-center items-stretch'>
             {question.all_answers.map((answer) => {
               if (q_and_a[currentQuestionIndex] === undefined) return (
                 <div
@@ -167,7 +169,22 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
               return (
                 <div
                   onClick={() => SelectQuestion(answer)}
-                  className={`overflow-hidden capitalize ${q_and_a[currentQuestionIndex].answerSelected === answer ? "btn btn-primary" : "btn"}`}
+                  className={
+                    `flex justify-center text-center 
+                    text-md md:text-2xl lg:text-3xl 
+                    cursor-pointer 
+                    overflow-hidden 
+                    capitalize 
+                    p-5 
+                    rounded-md 
+                    hover:bg-primary 
+                    ${q_and_a[currentQuestionIndex].answerSelected === answer ?
+                      "bg-primary"
+                      :
+                      "bg-base-100"
+                    }
+                    `
+                  }
                   key={answer}
                 >
                   {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(answer))}
@@ -176,6 +193,8 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
             })}
           </div>
       }
+      {/* <br />
+      <hr className='h-2 w-[90%] bg-current'/> */}
     </div>
   )
 }

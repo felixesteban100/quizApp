@@ -103,7 +103,6 @@ function App() {
         theme={theme}
         setTheme={setTheme}
         setAuthToken={setAuthToken}
-        currentUserName={currentUserName}
         setCurrentUserName={setCurrentUserName}
         listOfLinks={
           authToken === "" ?
