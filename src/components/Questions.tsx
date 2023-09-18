@@ -30,6 +30,8 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
     }, 0)
   }
 
+  console.log(questionsObtained)
+
   return (
     <div className='w-[90vw] max-w-[115rem] min-h-[80vh] mx-auto'>
       {
@@ -52,7 +54,7 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
           <>
             <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
               {
-                questionsObtained.length !== 0 ?
+                questionsObtained.length !== 0 && q_and_a.length !== 0 ?
                   <>
                     {questionsObtained?.map((question, questionindex) => {
                       return (
@@ -79,7 +81,7 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
                     }
                   </>
                   :
-                  <div>No questions founded</div>
+                  <div>No questions found</div>
               }
             </div>
           </>
@@ -158,7 +160,7 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
               return (
                 <div
                   onClick={() => SelectQuestion(answer)}
-                  className={`overflow-hidden capitalize ${q_and_a[currentQuestionIndex].answerSelected ?? ''  === answer ? "btn btn-primary" : "btn"}`}
+                  className={`overflow-hidden capitalize ${q_and_a[currentQuestionIndex].answerSelected === answer ? "btn btn-primary" : "btn"}`}
                   key={answer}
                 >
                   {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(answer))}

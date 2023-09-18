@@ -9,8 +9,8 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
-
     const [response, setResponse] = useState("")
 
     async function registerUser(name: string, email: string, password: string) {
@@ -26,7 +26,10 @@ function Register() {
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        setLoading(true)
         const responseRegister = await registerUser(name, email, password);
+        setLoading(false)
+        
         if (typeof responseRegister === "object") setError("")
 
         if(responseRegister!.statusText === "Created") setResponse("User created")
@@ -79,7 +82,7 @@ function Register() {
                                 type="submit"
                                 className="btn btn-secondary normal-case"
                             >
-                                Sign up / Register
+                                {loading ? <span className="loading loading-spinner loading-md"></span> : "Sign up / Register"}
                             </button>
                         </div>
 

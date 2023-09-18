@@ -16,6 +16,7 @@ function PostCategory({ authToken/* , userId */ }: PostCategoryProps) {
     // createdBy: new Types.ObjectId(userId)
   });
 
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
   const [response, setResponse] = useState("")
@@ -52,7 +53,9 @@ function PostCategory({ authToken/* , userId */ }: PostCategoryProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // console.log(category)
+    setLoading(true)
     const responsePostMember = await postCategory(category);
+    setLoading(false)
     // console.log(responsePostMember)
     if (typeof responsePostMember === "object") {
       setError("")
@@ -103,7 +106,7 @@ function PostCategory({ authToken/* , userId */ }: PostCategoryProps) {
           className="w-[30%] btn btn-primary self-center normal-case"
           type="submit"
         >
-          Post Category
+          {loading ? <span className="loading loading-spinner loading-md"></span> : "Post Category"}
         </button>
 
         {

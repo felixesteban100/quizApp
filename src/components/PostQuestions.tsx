@@ -27,6 +27,8 @@ function PostQuestion({ authToken, userId, allCategories }: PostQuestionProps) {
 
   const [response, setResponse] = useState("")
 
+  const [loading, setLoading] = useState(false)
+
   async function postQuestion({ question, category, correct_answer, difficulty, incorrect_answers, type, img }: Question) {
     try {
       const response = await axios.post(
@@ -88,7 +90,9 @@ function PostQuestion({ authToken, userId, allCategories }: PostQuestionProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // console.log(member)
+    setLoading(true)
     const responsePostMember = await postQuestion(question);
+    setLoading(false)
 
     if (typeof responsePostMember === "object") {
       setError("")
@@ -239,7 +243,7 @@ function PostQuestion({ authToken, userId, allCategories }: PostQuestionProps) {
           className="w-[30%] btn btn-primary self-center normal-case"
           type="submit"
         >
-          Post Question
+          {loading ? <span className="loading loading-spinner loading-md"></span> : "Post Question"}
         </button>
 
         {

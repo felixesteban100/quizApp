@@ -34,6 +34,8 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
         img: ""
     });
 
+    const [loading, setLoading] = useState(false)
+
     const [error, setError] = useState("")
 
     const [response, setResponse] = useState("")
@@ -99,9 +101,11 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         // console.log(question)
+        setLoading(true)
         const responsePatchQuestion = await PatchQuestion(question);
-        console.log(responsePatchQuestion)
+        // console.log(responsePatchQuestion)
 
+        setLoading(false)
         if (typeof responsePatchQuestion === "object") {
             setError("")
             setResponse("Question Patched")
@@ -279,7 +283,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                     className="w-[30%] btn btn-primary self-center normal-case"
                     type="submit"
                 >
-                    Patch Question
+                    {loading ? <span className="loading loading-spinner loading-md"></span> : "Patch Question"}
                 </button>
 
                 {

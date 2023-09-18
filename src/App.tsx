@@ -34,7 +34,7 @@ function App() {
     refetchOnWindowFocus: false,
     queryKey: ["Questions"],
     queryFn: authToken === "" ? async () => {
-      const result = await axios.get<APIQuestionsResponse>(`https://opentdb.com/api.php?amount=${amountOfQuestions}&category=${categoryId}&type=${type}&difficulty=${difficulty}`).then((response) => response.data)
+      const result = await axios.get<APIQuestionsResponse>(`https://opentdb.com/api.php?amount=${amountOfQuestions}&category=${categoryId}&type=${type === "All" ? "" : type}&difficulty=${difficulty === "All" ? "" : difficulty}`).then((response) => response.data)
       return result.results.map(cu => {
         cu.all_answers = [cu.correct_answer, ...cu.incorrect_answers].sort(() => Math.random() - 0.5)
         cu.answerSelected = ""
@@ -54,12 +54,13 @@ function App() {
         const response = await axios.request<Question[]>(config);
         return response.data.map(cu => {
           cu.all_answers = [cu.correct_answer, ...cu.incorrect_answers].sort(() => Math.random() - 0.5)
-          cu.answerSelected = ""
           return cu
         });
       },
     onError: (error) => console.log(error),
   })
+
+  console.log(`https://opentdb.com/api.php?amount=${amountOfQuestions}&category=${categoryId}&type=${type}&difficulty=${difficulty}`)
 
   const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories, refetch: refetchAllCategories } = useQuery<Category[]>({
     enabled: true,
@@ -96,6 +97,7 @@ function App() {
   useEffect(() => {
     refetchAllCategories()
   }, [authToken])
+
 
   return (
     <div data-theme={theme} className='min-h-[100vh] transition-colors duration-700'>

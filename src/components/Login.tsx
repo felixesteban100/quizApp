@@ -13,6 +13,7 @@ function Login({ setUserId, setAuthToken, setCurrentUserName }: LoginProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
 
 
@@ -38,7 +39,9 @@ function Login({ setUserId, setAuthToken, setCurrentUserName }: LoginProps) {
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        setLoading(true)
         const responseLogin = await loginUser(email, password);
+        setLoading(false)
         if(typeof responseLogin === "object") {
             setError("")
             setAuthToken(responseLogin.data.token)
@@ -82,7 +85,7 @@ function Login({ setUserId, setAuthToken, setCurrentUserName }: LoginProps) {
                                 type="submit"
                                 className="btn btn-primary normal-case"
                             >
-                                Sign in
+                                {loading ? <span className="loading loading-spinner loading-md"></span> : "Sign in"}
                             </button>
                         </div>
 
