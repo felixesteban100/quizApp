@@ -72,9 +72,17 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
         setQuestion({ ...question, [name]: value });
     };
 
-    function handleIncorrectAnswersChange(event: React.ChangeEvent<HTMLInputElement>) {
-        event.target.value.split(",")
-        setQuestion({ ...question, incorrect_answers: event.target.value.split(",") })
+    function handleIncorrectAnswersChange(event: React.ChangeEvent<HTMLInputElement>, index: number) {
+        setQuestion(prevQuestion => {
+            let inA = prevQuestion.incorrect_answers
+
+            inA[index] = event.target.value
+
+            return {
+                ...question,
+                incorrect_answers: inA
+            }
+        })
     }
 
     function handleCorrectAnswerBoolean(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -110,7 +118,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
             setError("")
             setResponse("Question Patched")
             setTimeout(() => {
-                setResponse("Question Patched")
+                setResponse("")
             }, 2000)
         }
         /* if (responsePatchQuestion!.statusText === "OK") {
@@ -129,10 +137,10 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                 {isLoadingQuestionsByUser ?
                     <span className="mx-auto loading loading-dots loading-lg"></span>
                     :
-                    <label className="input-group">
-                        <span>Questions by: {currentUserName}</span>
+                    <label className="join join-vertical">
+                        <span className='bg-base-300 p-2 px-5 rounded-b-none'>Questions by: {currentUserName}</span>
                         <select
-                            className="select select-bordered w-full"
+                            className="select select-bordered w-full rounded-t-none"
                             value={questionSelectedId}
                             onChange={(e) => setQuestionSelectedId(e.target.value)}
                             name="questionSelected"
@@ -151,57 +159,21 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                         </select>
                     </label>
                 }
-                {/* <label className="input-group">
-                    <span>Questions by: {currentUserName}</span>
-                    {isLoadingQuestionsByUser ?
-                        <div className="loading loading-dots loading-lg"></div>
-                        :
-                        <select
-                            className="select select-bordered w-full"
-                            value={questionSelectedId}
-                            onChange={(e) => setQuestionSelectedId(e.target.value)}
-                            name="questionSelected"
-                        >
-                            <option value="" disabled>Select a category</option>
-                            {
-                                questionsByUser !== undefined && !isErrorQuestionsByUser ?
-                                    questionsByUser.map((questionUser) => {
-                                        if (questionUser._id === questionSelectedId && question.question !== questionUser.question) setQuestion({ ...questionUser })
-                                        return (
-                                            <option key={questionUser._id} value={questionUser._id} >{questionUser.question}</option>
-                                        )
-                                    })
-                                    :
-                                    <div>Error fetching questions...</div>
-                            }
-                        </select>
-                    }
-                </label> */}
-
-                <label className="input-group">
-                    <span>Question</span>
+                <label className="join join-vertical">
+                    <span className='bg-base-300 p-2 px-5 rounded-b-none'>Question</span>
                     <textarea
                         required
                         placeholder="Enter question..."
-                        className="textarea textarea-bordered w-full text-xl h-[12vh]"
+                        className="textarea textarea-bordered w-full text-xl h-[12vh] rounded-t-none"
                         value={question.question}
                         name="question"
                         onChange={(event) => handleTextareaChange(event)}
                     />
-                    {/* <input
-                        required
-                        type="text"
-                        placeholder="Enter question..."
-                        className="input input-bordered w-full"
-                        value={question.question}
-                        name="question"
-                        onChange={(event) => handleInputChange(event)}
-                    /> */}
                 </label>
-                <label className="input-group">
-                    <span>Type</span>
+                <label className="join join-vertical">
+                    <span className='bg-base-300 p-2 px-5 rounded-b-none'>Type</span>
                     <select
-                        className="select select-bordered w-full"
+                        className="select select-bordered w-full rounded-t-none"
                         value={question.type}
                         onChange={handleSelectChange}
                         name="type"
@@ -210,22 +182,22 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                         <option value="boolean">True / False</option>
                     </select>
                 </label>
-                <label className="input-group">
-                    <span>Correct answer</span>
+                <label className="join join-vertical">
+                    <span className='bg-base-300 p-2 px-5 rounded-b-none'>Correct answer</span>
                     {
                         question.type === 'multiple' ?
                             <input
                                 required
                                 type="text"
                                 placeholder="Correct answer..."
-                                className="input input-bordered w-full"
+                                className="input input-bordered w-full rounded-t-none"
                                 value={question.correct_answer}
                                 name="correct_answer"
                                 onChange={(event) => handleInputChange(event)}
                             />
                             :
                             <select
-                                className="select select-bordered w-full"
+                                className="select select-bordered w-full rounded-t-none"
                                 value={question.correct_answer}
                                 onChange={handleCorrectAnswerBoolean}
                                 name="correct_answer"
@@ -240,24 +212,42 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                     question.type === "boolean" ?
                         null
                         :
-                        <label className="input-group">
-                            <span>Incorrect answers</span>
+                        <label className="join join-vertical flex flex-col">
+                            <span className='bg-base-300 p-2 px-5 rounded-b-none'>Incorrect answers</span>
                             <input
                                 required
                                 type="text"
-                                placeholder="Answer 1, answer 2, answer 3"
-                                className="input input-bordered w-full"
-                                value={question.incorrect_answers}
+                                placeholder="Incorrect Answer 1"
+                                className="input input-bordered w-full rounded-none"
+                                value={question.incorrect_answers[0] ?? ""}
                                 name="incorrect_answers"
-                                onChange={(event) => handleIncorrectAnswersChange(event)}
+                                onChange={(event) => handleIncorrectAnswersChange(event, 0)}
+                            />
+                            <input
+                                required
+                                type="text"
+                                placeholder="Incorrect Answer 2"
+                                className="input input-bordered w-full rounded-none"
+                                value={question.incorrect_answers[1] ?? ""}
+                                name="incorrect_answers"
+                                onChange={(event) => handleIncorrectAnswersChange(event, 1)}
+                            />
+                            <input
+                                required
+                                type="text"
+                                placeholder="Incorrect Answer 3"
+                                className="input input-bordered w-full rounded-t-none"
+                                value={question.incorrect_answers[2] ?? ""}
+                                name="incorrect_answers"
+                                onChange={(event) => handleIncorrectAnswersChange(event, 2)}
                             />
                         </label>
                 }
 
-                <label className="input-group">
-                    <span>Category</span>
+                <label className="join join-vertical">
+                    <span className='bg-base-300 p-2 px-5 rounded-b-none'>Category</span>
                     <select
-                        className="select select-bordered w-full"
+                        className="select select-bordered w-full rounded-t-none"
                         value={question.category}
                         onChange={handleSelectChange}
                         name="category"
@@ -266,7 +256,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                         {allCategories !== undefined ?
                             allCategories.map((category) => {
                                 return (
-                                    <option key={category._id} value={category.name}>{category.name} {category.id}</option>
+                                    <option key={category.name} value={category.name}>{category.name} {category.id}</option>
                                 )
                             })
                             :
@@ -276,10 +266,10 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                 </label>
 
 
-                <label className="input-group">
-                    <span>Difficulty</span>
+                <label className="join join-vertical">
+                    <span className='bg-base-300 p-2 px-5 rounded-b-none'>Difficulty</span>
                     <select
-                        className="select select-bordered w-full"
+                        className="select select-bordered w-full rounded-t-none"
                         value={question.difficulty}
                         onChange={handleSelectChange}
                         name="difficulty"
@@ -290,13 +280,13 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                     </select>
                 </label>
 
-                <label className="input-group">
-                    <span>Image</span>
+                <label className="join join-vertical">
+                    <span className='bg-base-300 p-2 px-5 rounded-b-none'>Image</span>
                     <input
                         required
                         type="text"
                         placeholder="Enter image..."
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full rounded-t-none"
                         value={question.img}
                         name="img"
                         onChange={(event) => handleInputChange(event)}
@@ -313,12 +303,20 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
 
                 {
                     error !== "" &&
-                    <p className='text-red-500'>{error}</p>
+                    <div className="toast">
+                        <div className="alert alert-error">
+                            <span>{error} ❗</span>
+                        </div>
+                    </div>
                 }
 
                 {
                     response !== "" &&
-                    <p className='text-green-500'>{response}</p>
+                    <div className="toast">
+                        <div className="alert alert-success">
+                            <span>{response} ✔</span>
+                        </div>
+                    </div>
                 }
             </form>
         </div>

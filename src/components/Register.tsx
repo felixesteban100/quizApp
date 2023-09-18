@@ -18,9 +18,9 @@ function Register() {
             `${API_URL}/api/v1/auth/register`,
             { "name": name, "email": email, "password": password }
         )
-        .catch((error) => {
-            setError(error.response.data.msg)
-        });
+            .catch((error) => {
+                setError(error.response.data.msg)
+            });
         return response;
     }
 
@@ -29,10 +29,10 @@ function Register() {
         setLoading(true)
         const responseRegister = await registerUser(name, email, password);
         setLoading(false)
-        
+
         if (typeof responseRegister === "object") setError("")
 
-        if(responseRegister!.statusText === "Created") setResponse("User created")
+        if (responseRegister!.statusText === "Created") setResponse("User created")
     }
 
     return (
@@ -40,7 +40,7 @@ function Register() {
             <div className="m-auto w-96 rounded-lg shadow-sm shadow-primary p-8">
                 <h2 className="text-2xl font-bold mb-5">Register</h2>
                 <form className="form-control gap-5" onSubmit={handleSubmit}>
-                    <label className="input-group">
+                    <label className="join join-vertical">
                         <span>Name</span>
                         <input
                             required
@@ -52,7 +52,7 @@ function Register() {
                         />
                     </label>
 
-                    <label className="input-group">
+                    <label className="join join-vertical">
                         <span>Email</span>
                         <input
                             required
@@ -63,7 +63,7 @@ function Register() {
                             onChange={(event) => setEmail(event.target.value)}
                         />
                     </label>
-                    <label className="input-group">
+                    <label className="join join-vertical">
                         <span>Password</span>
                         <input
                             required
@@ -98,12 +98,20 @@ function Register() {
 
                     {
                         error !== "" &&
-                        <p className='text-red-500'>{error}</p>
+                        <div className="toast">
+                            <div className="alert alert-error">
+                                <span>{error} ❗</span>
+                            </div>
+                        </div>
                     }
 
                     {
                         response !== "" &&
-                        <p className='text-green-500'>{response}</p>
+                        <div className="toast">
+                            <div className="alert alert-success">
+                                <span>{response} ✔</span>
+                            </div>
+                        </div>
                     }
                 </form>
             </div>

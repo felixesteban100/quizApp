@@ -54,7 +54,7 @@ function Login({ setUserId, setAuthToken, setCurrentUserName }: LoginProps) {
             <div className="m-auto w-96 rounded-lg shadow-sm shadow-primary p-8">
                 <h2 className="text-2xl font-bold mb-5">Login</h2>
                 <form className="form-control gap-5" onSubmit={handleSubmit}>
-                    <label className="input-group">
+                    <label className="join join-vertical">
                         <span>Email</span>
                         <input
                             onClick={() => setError("")}
@@ -66,7 +66,7 @@ function Login({ setUserId, setAuthToken, setCurrentUserName }: LoginProps) {
                             onChange={(event) => setEmail(event.target.value)}
                         />
                     </label>
-                    <label className="input-group">
+                    <label className="join join-vertical">
                         <span>Password</span>
                         <input
                             onClick={() => setError("")}

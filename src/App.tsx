@@ -93,7 +93,7 @@ function App() {
   })
 
   useEffect(() => {
-    if(authToken === "") setCategoryId(0)
+    if (authToken === "") setCategoryId(0)
     refetchAllCategories()
   }, [authToken])
 
@@ -166,6 +166,8 @@ function App() {
               allCategories={allCategories}
               isLoadingCategories={isLoadingCategories}
               isErrorCategories={isErrorCategories}
+              isLoading={isLoading}
+              isFetching={isFetching}
             />
           }
         />
@@ -182,7 +184,23 @@ function App() {
                 isError={isError}
               />
               :
-              <div>Error internet</div>
+              <Home
+                currentUserName={currentUserName}
+                categoryId={categoryId}
+                setCategoryId={setCategoryId}
+                amountOfQuestions={amountOfQuestions}
+                setAmountOfQuestions={setAmountOfQuestions}
+                difficulty={difficulty}
+                setDifficulty={setDifficulty}
+                type={type}
+                setType={setType}
+                refetchQuestions={refetchQuestions}
+                allCategories={allCategories}
+                isLoadingCategories={isLoadingCategories}
+                isErrorCategories={isErrorCategories}
+                isLoading={isLoading}
+                isFetching={isFetching}
+              />
           }
         />
         <Route path="*" element={<Navigate to="/" />} />

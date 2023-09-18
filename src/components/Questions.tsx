@@ -30,8 +30,6 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
     }, 0)
   }
 
-  console.log(questionsObtained)
-
   return (
     <div className='w-[90vw] max-w-[115rem] min-h-[80vh] mx-auto'>
       {
@@ -48,43 +46,43 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
             </div>
           </>
           :
-          isError ? 
-              <div className='text-center text-2xl'>Opps... something happend try again please</div>
-          :
-          <>
-            <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
-              {
-                questionsObtained.length !== 0 && q_and_a.length !== 0 ?
-                  <>
-                    {questionsObtained?.map((question, questionindex) => {
-                      return (
-                        <QuestionCard
-                          key={question.question}
-                          q_and_a={q_and_a}
-                          setQ_and_a={setQ_and_a}
-                          currentQuestionIndex={questionindex}
-                          checkAnswers={checkAnswers}
-                          question={question}
-                        />
-                      )
-                    })}
-                    {
-                      checkAnswers ?
-                        <div className='flex justify-center items-center gap-5'>
-                          <div className='text-2xl'>
-                            Correct answers: {getCorrectAnswers()}/{questionsObtained.length}
+          isError ?
+            <div className='text-center text-2xl'>Opps... something happend try again please</div>
+            :
+            <>
+              <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
+                {
+                  questionsObtained.length !== 0 && q_and_a.length !== 0 ?
+                    <>
+                      {questionsObtained?.map((question, questionindex) => {
+                        return (
+                          <QuestionCard
+                            key={question.question}
+                            q_and_a={q_and_a}
+                            setQ_and_a={setQ_and_a}
+                            currentQuestionIndex={questionindex}
+                            checkAnswers={checkAnswers}
+                            question={question}
+                          />
+                        )
+                      })}
+                      {
+                        checkAnswers ?
+                          <div className='flex justify-center items-center gap-5'>
+                            <div className='text-2xl'>
+                              Correct answers: {getCorrectAnswers()}/{questionsObtained.length}
+                            </div>
+                            <div className='btn' onClick={() => { window.scrollTo(0, 0); refetchQuestions() }}>More Questions</div>
                           </div>
-                          <div className='btn' onClick={() => { window.scrollTo(0, 0); refetchQuestions() }}>More Questions</div>
-                        </div>
-                        :
-                        <div className={`btn`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
-                    }
-                  </>
-                  :
-                  <div>No questions found</div>
-              }
-            </div>
-          </>
+                          :
+                          <div className={`btn`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
+                      }
+                    </>
+                    :
+                    <div>No questions found</div>
+                }
+              </div>
+            </>
       }
     </div>
   )
@@ -157,6 +155,15 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
           :
           <div className='w-[80%] h-auto grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 justify-center items-center'>
             {question.all_answers.map((answer) => {
+              if (q_and_a[currentQuestionIndex] === undefined) return (
+                <div
+                  onClick={() => SelectQuestion(answer)}
+                  className={`overflow-hidden capitalize btn `}
+                  key={answer}
+                >
+                  <span className="loading loading-spinner loading-md"></span>
+                </div>
+              )
               return (
                 <div
                   onClick={() => SelectQuestion(answer)}

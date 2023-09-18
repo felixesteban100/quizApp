@@ -76,25 +76,25 @@ function PostCategory({ authToken/* , userId */ }: PostCategoryProps) {
     <div className="min-h-[90vh] flex flex-col justify-center items-center">
       <div className="text-4xl mb-5">Post a new category</div>
       <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
-        <label className="input-group">
-          <span>Name</span>
+        <label className="join join-vertical">
+          <span className='bg-base-300 p-2 px-5 rounded-b-none'>Name</span>
           <input
             required
             type="text"
             placeholder="Enter name..."
-            className="input input-bordered w-full"
+            className="input input-bordered w-full rounded-t-none"
             value={category.name}
             name="name"
             onChange={(event) => handleInputChange(event)}
           />
         </label>
-        <label className="input-group">
-          <span>Id</span>
+        <label className="join join-vertical">
+          <span className='bg-base-300 p-2 px-5 rounded-b-none'>Id</span>
           <input
             required
             type="number"
             placeholder="Enter id number..."
-            className="input input-bordered w-full"
+            className="input input-bordered w-full rounded-t-none"
             value={category.id}
             name="id"
             min={1}
@@ -111,12 +111,20 @@ function PostCategory({ authToken/* , userId */ }: PostCategoryProps) {
 
         {
           error !== "" &&
-          <p className='text-red-500'>{error}</p>
+          <div className="toast">
+            <div className="alert alert-error">
+              <span>{error} ❗</span>
+            </div>
+          </div>
         }
 
         {
           response !== "" &&
-          <p className='text-green-500'>{response}</p>
+          <div className="toast">
+            <div className="alert alert-success">
+              <span>{response} ✔</span>
+            </div>
+          </div>
         }
       </form>
 

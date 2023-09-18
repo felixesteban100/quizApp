@@ -16,10 +16,12 @@ type HomeProps = {
   allCategories: Category[] | undefined
   isLoadingCategories: boolean
   isErrorCategories: boolean;
-  currentUserName: string
+  currentUserName: string;
+  isFetching: boolean;
+  isLoading: boolean
 }
 
-function Home({ currentUserName, allCategories, isLoadingCategories, isErrorCategories, categoryId, setCategoryId, amountOfQuestions, setAmountOfQuestions, difficulty, setDifficulty, type, setType, refetchQuestions }: HomeProps) {
+function Home({ currentUserName, allCategories, isLoadingCategories, isErrorCategories, categoryId, setCategoryId, amountOfQuestions, setAmountOfQuestions, difficulty, setDifficulty, type, setType, refetchQuestions, isLoading, isFetching }: HomeProps) {
   return (
     <div className='flex flex-col mx-auto justify-center items-center gap-5 py-10'>
       {/* <img className='h-[20vw] max-h-[10rem]' src="https://cdn-icons-png.flaticon.com/512/6193/6193558.png" alt="" /> */}
@@ -82,7 +84,11 @@ function Home({ currentUserName, allCategories, isLoadingCategories, isErrorCate
           refetchQuestions()
         }}
       >
-        <p>Get questions</p>
+        {isFetching || isLoading ?
+          <span className="loading loading-spinner loading-lg"></span>
+          :
+          <p>Get Questions</p>
+        }
       </Link>
     </div >
   )

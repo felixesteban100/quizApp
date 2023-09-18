@@ -70,11 +70,11 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
                 {isLoadingCategoriesByUser ?
                     <div className="mx-auto loading loading-dots loading-lg"></div>
                     :
-                    <label className="input-group">
-                        <span>Categories by: {currentUserName}</span>
+                    <label className="join join-vertical">
+                        <span className='bg-base-300 p-2 px-5 rounded-b-none'>Categories by: {currentUserName}</span>
 
                         <select
-                            className="select select-bordered w-full"
+                            className="select select-bordered w-full rounded-t-none"
                             value={CategorySelectedId}
                             onChange={(e) => setCategorySelectedId(e.target.value)}
                             name="CategorySelected"
@@ -138,12 +138,20 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
 
                 {
                     error !== "" &&
-                    <p className='text-red-500'>{error}</p>
+                    <div className="toast">
+                        <div className="alert alert-error">
+                            <span>{error} ❗</span>
+                        </div>
+                    </div>
                 }
 
                 {
                     response !== "" &&
-                    <p className='text-green-500'>{response}</p>
+                    <div className="toast">
+                        <div className="alert alert-success">
+                            <span>{response} ✔</span>
+                        </div>
+                    </div>
                 }
             </form>
 

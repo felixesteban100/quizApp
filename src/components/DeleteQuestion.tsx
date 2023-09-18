@@ -68,15 +68,15 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
                 {isLoadingQuestionsByUser ?
                     <span className="mx-auto loading loading-dots loading-lg"></span>
                     :
-                    <label className="input-group">
-                        <span>Questions by: {currentUserName}</span>
+                    <label className="join join-vertical">
+                        <span className='bg-base-300 p-2 px-5 rounded-b-none'>Questions by: {currentUserName}</span>
                         <select
-                            className="select select-bordered w-full"
+                            className="select select-bordered w-full rounded-t-none"
                             value={questionSelectedId}
                             onChange={(e) => setQuestionSelectedId(e.target.value)}
                             name="questionSelected"
                         >
-                            <option value="" disabled>Select a category</option>
+                            <option value="" disabled>Select a question</option>
                             {questionsByUser !== undefined && !isErrorQuestionsByUser ?
                                 questionsByUser.map((questionUser) => {
                                     return (
@@ -137,12 +137,20 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
 
                 {
                     error !== "" &&
-                    <p className='text-red-500'>{error}</p>
+                    <div className="toast">
+                        <div className="alert alert-error">
+                            <span>{error} ❗</span>
+                        </div>
+                    </div>
                 }
 
                 {
                     response !== "" &&
-                    <p className='text-green-500'>{response}</p>
+                    <div className="toast">
+                        <div className="alert alert-success">
+                            <span>{response} ✔</span>
+                        </div>
+                    </div>
                 }
             </form>
 
