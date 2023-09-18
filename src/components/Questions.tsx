@@ -8,13 +8,13 @@ import { EMPTY_QUESTION } from '../constants';
 type QuestionsProps = {
   questionsObtained: Question[];
   isLoading: boolean;
-  isError: boolean;
   isFetching: boolean;
+  isError: boolean
   refetchQuestions: () => void;
   amountOfQuestions: number
 }
 
-function Questions({ questionsObtained, isLoading, isError, isFetching, refetchQuestions, amountOfQuestions }: QuestionsProps) {
+function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQuestions, amountOfQuestions }: QuestionsProps) {
   const [checkAnswers, setCheckAnswers] = useState<boolean>(false)
   const [q_and_a, setQ_and_a] = useState<Question[]>(questionsObtained)
 
@@ -31,7 +31,7 @@ function Questions({ questionsObtained, isLoading, isError, isFetching, refetchQ
   }
 
   return (
-    <div className='w-[90vw] max-w-[115rem] mx-auto'>
+    <div className='w-[90vw] max-w-[115rem] min-h-[80vh] mx-auto'>
       {
         isFetching || isLoading ?
           <>
@@ -46,36 +46,43 @@ function Questions({ questionsObtained, isLoading, isError, isFetching, refetchQ
             </div>
           </>
           :
-          questionsObtained !== undefined || isError ?
-            <>
-              <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
-                {questionsObtained?.map((question, questionindex) => {
-                  return (
-                    <QuestionCard
-                      key={question.question}
-                      q_and_a={q_and_a}
-                      setQ_and_a={setQ_and_a}
-                      currentQuestionIndex={questionindex}
-                      checkAnswers={checkAnswers}
-                      question={question}
-                    />
-                  )
-                })}
-                {
-                  checkAnswers ?
-                    <div className='flex justify-center items-center gap-5'>
-                      <div className='text-2xl'>
-                        Correct answers: {getCorrectAnswers()}/{amountOfQuestions}
-                      </div>
-                      <div className='btn' onClick={() => {window.scrollTo(0, 0); refetchQuestions()}}>More Questions</div>
-                    </div>
-                    :
-                    <div className={`btn`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
-                }
-              </div>
-            </>
-            :
-            <div>Error</div>
+          isError ? 
+              <div className='text-center text-2xl'>Opps... something happend try again please</div>
+          :
+          <>
+            <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
+              {
+                questionsObtained.length !== 0 ?
+                  <>
+                    {questionsObtained?.map((question, questionindex) => {
+                      return (
+                        <QuestionCard
+                          key={question.question}
+                          q_and_a={q_and_a}
+                          setQ_and_a={setQ_and_a}
+                          currentQuestionIndex={questionindex}
+                          checkAnswers={checkAnswers}
+                          question={question}
+                        />
+                      )
+                    })}
+                    {
+                      checkAnswers ?
+                        <div className='flex justify-center items-center gap-5'>
+                          <div className='text-2xl'>
+                            Correct answers: {getCorrectAnswers()}/{questionsObtained.length}
+                          </div>
+                          <div className='btn' onClick={() => { window.scrollTo(0, 0); refetchQuestions() }}>More Questions</div>
+                        </div>
+                        :
+                        <div className={`btn`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
+                    }
+                  </>
+                  :
+                  <div>No questions founded</div>
+              }
+            </div>
+          </>
       }
     </div>
   )
@@ -117,6 +124,12 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
           Difficulty: <span className={`font-semibold ${question.difficulty === "hard" ? 'text-error' : question.difficulty === "medium" ? 'text-warning' : 'text-success'}`}>{question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1, question.difficulty.length)} {getGeneralEmojiByDifficulty(question.difficulty)}</span>
         </p>
         <p className='text-md md:text-2xl font-bold'>{currentQuestionIndex + 1}. {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(question.question))}</p>
+        {
+          question.img && question.img.includes('http') ?
+            <img className='rounded-md max-h-[20rem]' src={question.img} alt={question.question} />
+            :
+            null
+        }
       </div>
       {
         checkAnswers ?
@@ -124,8 +137,8 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
             {question.all_answers.map((answer) => {
               return (
                 <div
-                // ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "btn btn-error" : "btn"}
-                className={`
+                  // ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "btn btn-error" : "btn"}
+                  className={`
                       btn
                       ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "btn-error" : ""}
                       ${(answer === question.correct_answer) ? "btn-success" : ""}
@@ -170,11 +183,11 @@ function QuestionCardLoading({ question }: { question: Question }) {
         <p className='text-md md:text-2xl font-bold'>{question.question}</p>
       </div>
       <div className='min-w-[100%] grid grid-cols-2 gap-2 mt-5'>
-        {question.all_answers.map((answer) => {
+        {question.all_answers.map((answer, index) => {
           return (
             <div
               className={`btn btn-disabled overflow-hidden capitalize`}
-              key={answer}
+              key={index}
             >
               {answer}
             </div>

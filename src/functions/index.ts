@@ -36,6 +36,7 @@ export function getEmojiByCategoryName(categoryName: string): string | null {
         "Science: Gadgets": "📱",
         "Entertainment: Japanese Anime & Manga": "🇯🇵",
         "Entertainment: Cartoon & Animations": "📺",
+        "Life": "🤍"
     };
 
     const emoji = emojiMap[categoryName];
@@ -43,7 +44,7 @@ export function getEmojiByCategoryName(categoryName: string): string | null {
     if (emoji) {
         return emoji;
     } else {
-        return null;
+        return '';
     }
 }
 
@@ -57,6 +58,6 @@ export function getGeneralEmojiByDifficulty(difficulty: string): string | null {
     if (emojiMap[difficulty]) {
       return emojiMap[difficulty];
     } else {
-      return null;
+      return '';
     }
   }
