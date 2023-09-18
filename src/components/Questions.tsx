@@ -158,7 +158,7 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
               return (
                 <div
                   onClick={() => SelectQuestion(answer)}
-                  className={`overflow-hidden capitalize ${q_and_a[currentQuestionIndex].answerSelected === answer ? "btn btn-primary" : "btn"}`}
+                  className={`overflow-hidden capitalize ${q_and_a[currentQuestionIndex].answerSelected ?? ''  === answer ? "btn btn-primary" : "btn"}`}
                   key={answer}
                 >
                   {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(answer))}

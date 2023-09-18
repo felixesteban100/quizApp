@@ -66,7 +66,7 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
     return (
         <div className="min-h-[90vh] flex flex-col justify-center items-center">
             <div className="text-4xl mb-5">Delete a Category</div>
-            <form className="w-[50%] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
+            <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
                 <label className="input-group">
                     <span>Categories by: {currentUserName}</span>
                     {isLoadingCategoriesByUser ?
@@ -94,7 +94,7 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
                 </label>
 
                 <div
-                    className="btn btn-error"
+                    className={`btn btn-error ${CategorySelectedId === "" ? "btn-disabled" : ""}`}
                     onClick={() => {
                         const modal = document.getElementById('my_modal_deleteCategory')
                         // @ts-ignore
@@ -121,6 +121,11 @@ function DeleteCategory({ authToken, currentUserName }: DeleteCategoryProps) {
                         }
 
                         <div className="modal-action">
+                            <div onClick={() => {
+                                const modal = document.getElementById('my_modal_deleteCategory')
+                                // @ts-ignore
+                                if (modal !== null) modal.close()
+                            }} className="btn btn-primary normal-case">Cancel</div>
                             <button type='submit' onClick={() => {
                                 const modal = document.getElementById('my_modal_deleteCategory')
                                 // @ts-ignore

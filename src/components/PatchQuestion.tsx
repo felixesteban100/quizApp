@@ -65,6 +65,11 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
         setQuestion({ ...question, [name]: value });
     };
 
+    function handleTextareaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+        const { name, value } = event.target;
+        setQuestion({ ...question, [name]: value });
+    };
+
     function handleIncorrectAnswersChange(event: React.ChangeEvent<HTMLInputElement>) {
         event.target.value.split(",")
         setQuestion({ ...question, incorrect_answers: event.target.value.split(",") })
@@ -97,7 +102,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
         const responsePatchQuestion = await PatchQuestion(question);
         console.log(responsePatchQuestion)
 
-        if (typeof responsePatchQuestion === "object"){
+        if (typeof responsePatchQuestion === "object") {
             setError("")
             setResponse("Question Patched")
             setTimeout(() => {
@@ -114,9 +119,9 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
     }
 
     return (
-        <div className="min-h-[90vh] flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center">
             <div className="text-4xl mb-5">Patch a question</div>
-            <form className="w-[50%] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
+            <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
                 <label className="input-group">
                     <span>Questions by: {currentUserName}</span>
                     {isLoadingQuestionsByUser ?
@@ -146,7 +151,15 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
 
                 <label className="input-group">
                     <span>Question</span>
-                    <input
+                    <textarea
+                        required
+                        placeholder="Enter question..."
+                        className="textarea textarea-bordered w-full text-xl h-[12vh]"
+                        value={question.question}
+                        name="question"
+                        onChange={(event) => handleTextareaChange(event)}
+                    />
+                    {/* <input
                         required
                         type="text"
                         placeholder="Enter question..."
@@ -154,7 +167,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
                         value={question.question}
                         name="question"
                         onChange={(event) => handleInputChange(event)}
-                    />
+                    /> */}
                 </label>
                 <label className="input-group">
                     <span>Type</span>

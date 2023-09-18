@@ -54,6 +54,11 @@ function PostQuestion({ authToken, userId, allCategories }: PostQuestionProps) {
     setQuestion({ ...question, [name]: value });
   };
 
+  function handleTextareaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const { name, value } = event.target;
+    setQuestion({ ...question, [name]: value });
+  };
+
   function handleIncorrectAnswersChange(event: React.ChangeEvent<HTMLInputElement>) {
     event.target.value.split(",")
     setQuestion({ ...question, incorrect_answers: event.target.value.split(",") })
@@ -85,7 +90,7 @@ function PostQuestion({ authToken, userId, allCategories }: PostQuestionProps) {
     // console.log(member)
     const responsePostMember = await postQuestion(question);
 
-    if (typeof responsePostMember === "object"){
+    if (typeof responsePostMember === "object") {
       setError("")
       setResponse("Question posted")
       setTimeout(() => {
@@ -103,18 +108,26 @@ function PostQuestion({ authToken, userId, allCategories }: PostQuestionProps) {
   return (
     <div className="min-h-[90vh] flex flex-col justify-center items-center">
       <div className="text-4xl mb-5">Post a question</div>
-      <form className="w-[50%] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
+      <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
         <label className="input-group">
           <span>Question</span>
-          <input
+          <textarea
             required
-            type="text"
+            placeholder="Enter question..."
+            className="textarea textarea-bordered w-full text-xl h-[12vh]"
+            value={question.question}
+            name="question"
+            onChange={(event) => handleTextareaChange(event)}
+          />
+          {/* <input
+            required
+            type="textarea"
             placeholder="Enter question..."
             className="input input-bordered w-full"
             value={question.question}
             name="question"
             onChange={(event) => handleInputChange(event)}
-          />
+          /> */}
         </label>
         <label className="input-group">
           <span>Type</span>

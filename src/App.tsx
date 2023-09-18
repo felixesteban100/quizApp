@@ -14,7 +14,7 @@ import { API_URL } from './constants';
 import PatchQuestion from './components/PatchQuestion';
 import DeleteQuestion from './components/DeleteQuestion';
 import DeleteCategory from './components/DeleteCategory';
-
+import { useEffect } from 'react';
 
 function App() {
   const [authToken, setAuthToken] = useLocalStorage("QUIZZAPP_TOKEN", "")
@@ -61,7 +61,7 @@ function App() {
     onError: (error) => console.log(error),
   })
 
-  const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories } = useQuery<Category[]>({
+  const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories, refetch: refetchAllCategories } = useQuery<Category[]>({
     enabled: true,
     refetchOnMount: true,
     refetchOnReconnect: false,
@@ -92,6 +92,10 @@ function App() {
       },
     onError: (error) => console.log(error),
   })
+
+  useEffect(() => {
+    refetchAllCategories()
+  }, [authToken])
 
   return (
     <div data-theme={theme} className='min-h-[100vh] transition-colors duration-700'>

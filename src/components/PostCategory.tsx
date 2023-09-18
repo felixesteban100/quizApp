@@ -72,7 +72,7 @@ function PostCategory({ authToken/* , userId */ }: PostCategoryProps) {
   return (
     <div className="min-h-[90vh] flex flex-col justify-center items-center">
       <div className="text-4xl mb-5">Post a new category</div>
-      <form className="w-[50%] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
+      <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
         <label className="input-group">
           <span>Name</span>
           <input

@@ -49,9 +49,9 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
 
         if (typeof responseDeleteQuestion === "object") {
             setError("")
-            setResponse("Question Deleted") 
+            setResponse("Question Deleted")
             setTimeout(() => {
-                setResponse("") 
+                setResponse("")
             }, 2000)
             refetch()
         }
@@ -63,8 +63,8 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
 
     return (
         <div className="min-h-[90vh] flex flex-col justify-center items-center">
-            <div className="text-4xl mb-5">Patch a question</div>
-            <form className="w-[50%] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
+            <div className="text-4xl mb-5">Delete a question</div>
+            <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
                 <label className="input-group">
                     <span>Questions by: {currentUserName}</span>
                     <select
@@ -90,15 +90,16 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
                 </label>
 
                 <div
-                    className="btn btn-error"
+                    className={`btn btn-error ${questionSelectedId === "" ? "btn-disabled" : ""}`}
                     onClick={() => {
-                        const modal = document.getElementById('my_modal_4')
+                        const modal = document.getElementById('my_modal_deleteQuestion')
                         // @ts-ignore
                         if (modal !== null) modal.showModal()
-                    }}>
+                    }}
+                >
                     Delete question
                 </div>
-                <dialog id="my_modal_4" className="modal">
+                <dialog id="my_modal_deleteQuestion" className="modal">
                     <div className="modal-box w-11/12 max-w-5xl">
                         <h3 className="font-bold text-lg">Deleting question...</h3>
                         <p className="py-4 text-xl md:text-2xl">Are you sure you want to delete this question?</p>
@@ -120,10 +121,16 @@ function DeleteQuestion({ authToken, currentUserName }: DeleteQuestionProps) {
                         }
 
                         <div className="modal-action">
-                            <form method="dialog">
-                                {/* if there is a button, it will close the modal */}
-                                <button onClick={() => {deleteQuestion(); refetch()}} className="btn btn-error normal-case">Yes, delete this question.</button>
-                            </form>
+                            <div onClick={() => {
+                                const modal = document.getElementById('my_modal_deleteQuestion')
+                                // @ts-ignore
+                                if (modal !== null) modal.close()
+                            }} className="btn btn-primary normal-case">Cancel</div>
+                            <button type='submit' onClick={() => {
+                                const modal = document.getElementById('my_modal_deleteQuestion')
+                                // @ts-ignore
+                                if (modal !== null) modal.close()
+                            }} className="btn btn-error normal-case">Yes, delete this Category.</button>
                         </div>
                     </div>
                 </dialog>
