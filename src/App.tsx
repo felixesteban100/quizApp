@@ -16,6 +16,9 @@ import DeleteQuestion from './components/DeleteQuestion';
 import DeleteCategory from './components/DeleteCategory';
 import { useEffect } from 'react';
 
+// add a explanation for the correct answer
+// add a timer if the user deceides 
+
 function App() {
   const [authToken, setAuthToken] = useLocalStorage("QUIZZAPP_TOKEN", "")
   const [userId, setUserId] = useLocalStorage("QUIZZAPP_USERID", "")
@@ -173,9 +176,9 @@ function App() {
         <Route
           path={"/questions"}
           element={
-            (questionsObtained !== undefined && !isError) /* && questionsObtained.length === amountOfQuestions */ ?
+            (/* questionsObtained !== undefined && */ !isError) /* && questionsObtained.length === amountOfQuestions */ ?
               <Questions
-                questionsObtained={questionsObtained}
+                questionsObtained={questionsObtained ?? []}
                 isLoading={isLoading}
                 isFetching={isFetching}
                 refetchQuestions={refetchQuestions}
@@ -183,23 +186,7 @@ function App() {
                 isError={isError}
               />
               :
-              <Home
-                currentUserName={currentUserName}
-                categoryId={categoryId}
-                setCategoryId={setCategoryId}
-                amountOfQuestions={amountOfQuestions}
-                setAmountOfQuestions={setAmountOfQuestions}
-                difficulty={difficulty}
-                setDifficulty={setDifficulty}
-                type={type}
-                setType={setType}
-                refetchQuestions={refetchQuestions}
-                allCategories={allCategories}
-                isLoadingCategories={isLoadingCategories}
-                isErrorCategories={isErrorCategories}
-                isLoading={isLoading}
-                isFetching={isFetching}
-              />
+              <>Error</>
           }
         />
         <Route path="*" element={<Navigate to="/" />} />

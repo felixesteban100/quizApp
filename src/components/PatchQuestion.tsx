@@ -131,7 +131,7 @@ function PatchQuestion({ authToken, userId, allCategories, currentUserName }: Pa
     }
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center pt-5">
             <div className="text-4xl mb-5">Patch a question</div>
             <form className="w-[90%] max-w-[50rem] form-control flex flex-col justify-center align-middle gap-5 mb-5" onSubmit={handleSubmit}>
                 {isLoadingQuestionsByUser ?
