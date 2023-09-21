@@ -16,7 +16,7 @@ function ChangeTheme({ theme, setTheme }: ChangeThemeProps) {
                 windowWidth > 700 ?
                 <label tabIndex={0} className="btn m-1 normal-case">Theme: {theme.charAt(0).toUpperCase() + theme.slice(1, theme.length)}</label>
                 :
-                <label tabIndex={0} className="btn m-1"><AiOutlineBgColors className="text-primary text-3xl" /></label>
+                <label tabIndex={0} className="btn m-1"><AiOutlineBgColors className="text-3xl" /></label>
             }
             <ul tabIndex={0} className="max-h-[70vh] overflow-y-scroll overflow-hidden dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-72 ">
                 {

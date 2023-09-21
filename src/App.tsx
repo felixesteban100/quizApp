@@ -1,28 +1,52 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Home from './components/Home'
+import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom'
+import Home from './pages/Home'
 import { useQuery } from 'react-query';
 import axios from "axios"
 import { APIQuestionsResponse, Category, Question } from './types'
 import useLocalStorage from './hooks/useLocalStorage'
-import Login from './components/Login';
-import Register from './components/Register';
 import Header from './components/Header';
-import Questions from './components/Questions';
-import PostQuestions from './components/PostQuestions';
-import PostCategory from './components/PostCategory';
-import { API_URL } from './constants';
-import PatchQuestion from './components/PatchQuestion';
-import DeleteQuestion from './components/DeleteQuestion';
-import DeleteCategory from './components/DeleteCategory';
+import { API_URL, REACT_QUERY_DEFAULT_PROPERTIES, ROUTES_LOGIN, ROUTES_LOGOUT } from './constants';
+import PatchQuestion from './pages/PatchQuestion';
+import DeleteQuestion from './pages/DeleteQuestion';
+import DeleteCategory from './pages/DeleteCategory';
 import { useEffect } from 'react';
+import PostCategory from './pages/PostCategory';
+import PostQuestion from './pages/PostQuestions';
+import Questions from './pages/Questions';
 
-// add a explanation for the correct answer
+
+import { SignedIn, SignedOut, RedirectToSignIn, SignOutButton } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import SignInOwn from './pages/SignInOwn';
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+} from "@/components/ui/sheet"
+
+
 // add a timer if the user deceides 
+// add a explanation for the correct answer
+
+//improve the design of the questionsCards
+
+// imporve the themes of the clerk components to accept all the daisyui themes
+
+
+type Link = {
+  to: string,
+  tag: string
+}
 
 function App() {
-  const [authToken, setAuthToken] = useLocalStorage("QUIZZAPP_TOKEN", "")
-  const [userId, setUserId] = useLocalStorage("QUIZZAPP_USERID", "")
-  const [currentUserName, setCurrentUserName] = useLocalStorage("CHURCHAPP_USERNAME", "")
+  const { getToken, isSignedIn, isLoaded } = useAuth();
+  const { user, isSignedIn: userExists } = useUser()
+
+  const location = useLocation()
+  useEffect(() => {
+    refetchAllCategories()
+  }, [location])
 
   const [theme, setTheme] = useLocalStorage("QUIZZAPP_THEME", "dark")
   const [amountOfQuestions, setAmountOfQuestions] = useLocalStorage<number>('QUIZZAPP_AMOUNT_OF_QUESTIONS', 5)
@@ -31,27 +55,26 @@ function App() {
   const [type, setType] = useLocalStorage<string>('QUIZZAPP_TYPE', 'All')
 
   const { isLoading, isError, data: questionsObtained, refetch: refetchQuestions, isFetching } = useQuery<Question[]>({
-    enabled: true,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
+    ...REACT_QUERY_DEFAULT_PROPERTIES,
     queryKey: ["Questions"],
-    queryFn: authToken === "" ? async () => {
-      const result = await axios.get<APIQuestionsResponse>(`https://opentdb.com/api.php?amount=${amountOfQuestions}&category=${categoryId}&type=${type === "All" ? "" : type}&difficulty=${difficulty === "All" ? "" : difficulty}`).then((response) => response.data)
-      return result.results.map(cu => {
-        cu.all_answers = [cu.correct_answer, ...cu.incorrect_answers].sort(() => Math.random() - 0.5)
-        cu.answerSelected = ""
-        return cu
-      })
-    } :
-      async () => {
+    queryFn: (isSignedIn === false || isSignedIn === undefined)
+      ? async () => {
+        const result = await axios
+          .get<APIQuestionsResponse>(`https://opentdb.com/api.php?amount=${amountOfQuestions}&category=${categoryId}&type=${type === "All" ? "" : type}&difficulty=${difficulty === "All" ? "" : difficulty}`)
+          .then((response) => response.data)
+        return result.results.map(cu => {
+          cu.all_answers = [cu.correct_answer, ...cu.incorrect_answers].sort(() => Math.random() - 0.5)
+          cu.answerSelected = ""
+          return cu
+        })
+      }
+      : async () => {
         const config = {
           method: 'get',
           maxBodyLength: Infinity,
           url: `${API_URL}/api/v1/questions/filter?amount=${amountOfQuestions}&categoryId=${categoryId}&type=${type}&difficulty=${difficulty}`,
-          // url: `${API_URL}/api/v1/questions/filter?categoryId=1&amount=1&difficulty=All&type=All`,
           headers: {
-            'Authorization': `Bearer ${authToken}`
+            'Authorization': `Bearer ${await getToken()}`
           }
         };
         const response = await axios.request<Question[]>(config);
@@ -60,17 +83,14 @@ function App() {
           return cu
         });
       },
-    onError: (error) => console.log(error),
   })
 
   const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories, refetch: refetchAllCategories } = useQuery<Category[]>({
-    enabled: true,
-    refetchOnMount: true,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
+    ...REACT_QUERY_DEFAULT_PROPERTIES,
+    enabled: (isSignedIn !== undefined && isLoaded),
     queryKey: ["Categories"],
-    queryFn: authToken === "" ?
-      async () => {
+    queryFn: (isSignedIn === false || isSignedIn === undefined)
+      ? async () => {
         const config = {
           method: 'get',
           maxBodyLength: Infinity,
@@ -79,114 +99,202 @@ function App() {
         const response = await axios.request(config);
         return response.data.trivia_categories
       }
-      :
-      async () => {
+      : async () => {
         const config = {
           method: 'get',
           maxBodyLength: Infinity,
           url: `${API_URL}/api/v1/categories`,
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
         };
         const response = await axios.request<Category[]>(config);
         return response.data
       },
-    onError: (error) => console.log(error),
   })
 
+  async function saveUser() {
+    try {
+      return await axios
+        .post(`${API_URL}/api/v1/user`, { ...user }, { headers: { Authorization: `Bearer ${await getToken()}` } })
+        .catch((error) => console.log(error.response.data.msg));
+    } catch (error) {
+      console.table({ type: typeof error, msg: error })
+      console.log('Opps... an error happend, please try later')
+    }
+  }
+
   useEffect(() => {
-    if (authToken === "") setCategoryId(0)
+    if ((!isSignedIn)) setCategoryId(0)
+    if (userExists === true) saveUser()
     refetchAllCategories()
-  }, [authToken])
+  }, [isSignedIn])
+
 
   return (
     <div data-theme={theme} className='min-h-[100vh] transition-colors duration-700'>
-      <Header
-        theme={theme}
-        setTheme={setTheme}
-        setAuthToken={setAuthToken}
-        setCurrentUserName={setCurrentUserName}
-        listOfLinks={
-          authToken === "" ?
-            {
-              page: [
-                { to: '/', tag: 'Home' },
-                { to: '/login', tag: 'Login' },
-                { to: '/register', tag: 'Register' },
-              ]
-            }
-            :
-            {
-              page: [
-                { to: '/', tag: 'Home' },
-              ],
-              question: [
-                { to: '/postquestions', tag: 'Post Question' },
-                { to: '/patchquestions', tag: 'Patch Question' },
-                { to: '/deletequestion', tag: 'Delete Question' },
-              ],
-              category: [
-                { to: '/postcategory', tag: 'Post Category' },
-                { to: '/deletecategory', tag: 'Delete Category' },
-              ],
-            }
-        }
-        loggedIn={authToken !== ""}
-      />
+      <Sheet>
+        <Header
+          theme={theme}
+          setTheme={setTheme}
+        />
+        <SheetContent data-theme={theme} side="left" className='bg-base-300 border-none menu p-4 text-base-content w-[45vw] md:w-[30vw] lg:w-[15rem]'>
+          {
+            user ?
+              <li>
+                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>User</p>
+                <ul className="p-2 flex flex-col justify-start items-start gap-2">
+                  <div className='flex gap-5 items-center'>
+                    <img className='rounded-full h-10' src={user.imageUrl ?? ""} alt="user_image" />
+                    {user.firstName}
+                  </div>
+                  <SignOutButton>
+                    <div className='btn btn-primary normal-case'>Sign out</div>
+                  </SignOutButton>
+                </ul>
+              </li>
+              :
+              null
+          }
+          {
+            !isSignedIn ?
+              <li>
+                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Quiz</p>
+                <ul className="p-2">
+                  {ROUTES_LOGOUT.page.map((currentLinkPage) => {
+                    return (
+                      <li key={currentLinkPage.to}>
+                        <SheetClose asChild>
+                          <Link className='text-base sm:text-lg md:text-xl ' to={currentLinkPage.to} >{currentLinkPage.tag}</Link>
+                        </SheetClose>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </li>
+              :
+              null
+          }
+          {
+            isSignedIn ?
+              <li>
+                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Question</p>
+                <ul className="p-2">
+                  {ROUTES_LOGIN.question.map((currentLinkQuestion) => {
+                    return (
+                      <li key={currentLinkQuestion.to}>
+                        <SheetClose asChild>
+                          <Link className='text-base sm:text-lg md:text-xl' to={currentLinkQuestion.to} >{currentLinkQuestion.tag}</Link>
+                        </SheetClose>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </li>
+              :
+              null
+          }
+          {
+            isSignedIn ?
+              <li>
+                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>Category</p>
+                <ul className="p-2">
+                  {ROUTES_LOGIN.category.map((currentLinkCategory) => {
+                    return (
+                      <li key={currentLinkCategory.to}>
+                        <SheetClose asChild>
+                          <Link className='text-base sm:text-lg md:text-xl' to={currentLinkCategory.to} >{currentLinkCategory.tag}</Link>
+                        </SheetClose>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </li>
+              :
+              null
+          }
+        </SheetContent>
+      </Sheet>
 
       <Routes>
-        {
-          authToken === "" ?
-            <>
-              <Route path="/login" element={<Login setUserId={setUserId} setAuthToken={setAuthToken} setCurrentUserName={setCurrentUserName} />} />
-              <Route path="/register" element={<Register />} />
-            </>
-            :
-            <>
-              <Route path="/postquestions" element={<PostQuestions allCategories={allCategories} authToken={authToken} userId={userId} />} />
-              <Route path="/patchquestions" element={<PatchQuestion currentUserName={currentUserName} allCategories={allCategories} authToken={authToken} userId={userId} />} />
-              <Route path="/deletequestion" element={<DeleteQuestion currentUserName={currentUserName} authToken={authToken} />} />
-              <Route path="/deletecategory" element={<DeleteCategory currentUserName={currentUserName} authToken={authToken} />} />
-              <Route path="/postcategory" element={<PostCategory authToken={authToken} userId={userId} />} />
-            </>
-        }
         <Route
           path="/"
+          element={<Home currentUserName={user ? user?.fullName : ""} categoryId={categoryId} setCategoryId={setCategoryId} amountOfQuestions={amountOfQuestions} setAmountOfQuestions={setAmountOfQuestions} difficulty={difficulty} setDifficulty={setDifficulty} type={type} setType={setType} refetchQuestions={refetchQuestions} allCategories={allCategories} isLoadingCategories={isLoadingCategories} isErrorCategories={isErrorCategories} isLoading={isLoading} isFetching={isFetching} />}
+        />
+        <Route
+          path="/sign-in/*"
           element={
-            <Home
-              currentUserName={currentUserName}
-              categoryId={categoryId}
-              setCategoryId={setCategoryId}
-              amountOfQuestions={amountOfQuestions}
-              setAmountOfQuestions={setAmountOfQuestions}
-              difficulty={difficulty}
-              setDifficulty={setDifficulty}
-              type={type}
-              setType={setType}
-              refetchQuestions={refetchQuestions}
-              allCategories={allCategories}
-              isLoadingCategories={isLoadingCategories}
-              isErrorCategories={isErrorCategories}
-              isLoading={isLoading}
-              isFetching={isFetching}
-            />
+            <SignInOwn />
           }
         />
         <Route
           path={"/questions"}
+          element={(!isError)
+            ? <Questions questionsObtained={questionsObtained ?? []} isLoading={isLoading} isFetching={isFetching} refetchQuestions={refetchQuestions} amountOfQuestions={amountOfQuestions} isError={isError} />
+            : <>Error</>
+          }
+        />
+        <Route
+          path="/postquestion"
           element={
-            (/* questionsObtained !== undefined && */ !isError) /* && questionsObtained.length === amountOfQuestions */ ?
-              <Questions
-                questionsObtained={questionsObtained ?? []}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                refetchQuestions={refetchQuestions}
-                amountOfQuestions={amountOfQuestions}
-                isError={isError}
-              />
-              :
-              <>Error</>
+            <>
+              <SignedIn>
+                <PostQuestion allCategories={allCategories} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+        <Route
+          path="/patchquestion"
+          element={
+            <>
+              <SignedIn>
+                <PatchQuestion currentUserName={user ? user?.fullName : ""} allCategories={allCategories} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+        <Route
+          path="/deletequestion"
+          element={
+            <>
+              <SignedIn>
+                <DeleteQuestion currentUserName={user ? user?.fullName : ""} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+        <Route
+          path="/postcategory"
+          element={
+            <>
+              <SignedIn>
+                <PostCategory />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+        <Route
+          path="/deletecategory"
+          element={
+            <>
+              <SignedIn>
+                <DeleteCategory currentUserName={user ? user?.fullName : ""} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
           }
         />
         <Route path="*" element={<Navigate to="/" />} />

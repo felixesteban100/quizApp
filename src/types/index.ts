@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 const objectId: Types.ObjectId = new Types.ObjectId();
 
 export type Question = {
-    _id?: string;
+    _id: string;
     answerSelected: string;
     category: string;
     type: string;
@@ -22,7 +22,7 @@ export type APIQuestionsResponse = {
 }
 
 export type Category = {
-    _id?: string
+    _id: string
     name: string;
     id: number,
     createdBy?: typeof objectId

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { getEmojiByCategoryName, getGeneralEmojiByDifficulty, replaceHTMLEntitiesWithCharacters, replaceUnicodeCharacters } from '../functions';
 import { Question } from '../types'
-// import { useInView } from 'react-intersection-observer';
 import { EMPTY_QUESTION } from '../constants';
-
+import { useInView } from 'react-intersection-observer';
+import AnswersContainer from '../components/AnswersContainer';
 
 type QuestionsProps = {
   questionsObtained: Question[];
@@ -30,30 +30,34 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
     }, 0)
   }
 
+  /* return (
+    <div className={`w-[90vw] max-w-[115rem] min-h-[80vh] mx-auto`}>
+      <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
+        {Array(1).fill(EMPTY_QUESTION).map((questionEmpty, index) => <QuestionCardLoading question={questionEmpty} key={index} />)}
+      </div>
+    </div>
+  )
+ */
   return (
-    <div className='w-[90vw] max-w-[115rem] min-h-[80vh] mx-auto'>
+    <div className={`w-[90vw] max-w-[115rem] min-h-[80vh] mx-auto`}>
       {
         isFetching || isLoading ?
           <>
-            <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
-              {
-                Array(amountOfQuestions).fill(EMPTY_QUESTION).map((questionEmpty, index) => {
-                  return (
-                    <QuestionCardLoading question={questionEmpty} key={index} />
-                  )
-                })
-              }
+            {/* <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
+              {Array(amountOfQuestions).fill(EMPTY_QUESTION).map((questionEmpty, index) => <QuestionCardLoading question={questionEmpty} key={index} />)}
+            </div> */}
+            <div className='w-full flex justify-center h-[90vh]'>
+              <span className="w-[30%] mx-auto loading loading-dots"></span>
             </div>
           </>
           :
-          isError ?
-            <div className='text-center text-2xl'>Opps... something happend try again please</div>
-            :
-            <>
+          isError
+            ? <div className='text-center text-2xl capitalize'>Opps... something happend try again please</div>
+            : <>
               <div className='w-full flex flex-col justify-center items-center gap-10 py-5'>
                 {
-                  questionsObtained.length !== 0 && q_and_a.length !== 0 ?
-                    <>
+                  questionsObtained.length !== 0 && q_and_a.length !== 0
+                    ? <>
                       {questionsObtained?.map((question, questionindex) => {
                         return (
                           <QuestionCard
@@ -69,17 +73,21 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
                       {
                         checkAnswers ?
                           <div className='flex justify-center items-center gap-5'>
-                            <div className='text-2xl'>
+                            <div className='text-2xl capitalize'>
                               Correct answers: {getCorrectAnswers()}/{questionsObtained.length}
                             </div>
-                            <div className='btn' onClick={() => { window.scrollTo(0, 0); refetchQuestions() }}>More Questions</div>
+                            <div className='btn capitalize' onClick={() => {
+                              window.scrollTo(0, 0)
+                              setTimeout(() => {
+                                refetchQuestions()
+                              }, 1000)
+                            }}>More Questions</div>
                           </div>
                           :
-                          <div className={`btn`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
+                          <div className={`btn capitalize text-2xl p-5 h-fit`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
                       }
                     </>
-                    :
-                    <div>No questions found</div>
+                    : null //<div>No questions found</div>
                 }
               </div>
             </>
@@ -96,9 +104,9 @@ type QuestionCardProps = {
   setQ_and_a: React.Dispatch<React.SetStateAction<Question[]>>
 }
 function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, setQ_and_a }: QuestionCardProps) {
-  /* const { ref: sectionRef, inView: sectionInView } = useInView({
+  const { ref: sectionRef, inView: sectionInView } = useInView({
     threshold: 0.2,
-  }); */
+  });
 
   function SelectQuestion(answerSelected: string) {
     setQ_and_a(prev => {
@@ -114,16 +122,17 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
 
   return (
     <div
-      // ref={sectionRef}
+      ref={sectionRef}
       // className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center bg-base-300 ${sectionInView ? `animate-scaleInCenter` : "animate-scaleOutCenter"}`}
-      className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center bg-base-300`}
+      className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center ${sectionInView ? `animate-scaleInCenter` : "animate-scaleOutCenter"}`}
+    // className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center bg-base-300`}
     >
       <div className='flex flex-col w-[80%] justify-center items-center gap-2'>
-        <p className='text-md md:text-2xl lg:text-3xl'>Category: <span>{question.category + getEmojiByCategoryName(question.category)}</span></p>
-        <p className={`text-md md:text-2xl lg:text-3xl`}>
-          Difficulty: <span className={`font-semibold ${question.difficulty === "hard" ? 'text-error' : question.difficulty === "medium" ? 'text-warning' : 'text-success'}`}>{question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1, question.difficulty.length)} {getGeneralEmojiByDifficulty(question.difficulty)}</span>
+        <p className='text-xl md:text-2xl lg:text-3xl'>Category: <span className='font-bold'>{question.category + getEmojiByCategoryName(question.category)}</span></p>
+        <p className={`text-xl md:text-2xl lg:text-3xl`}>
+          Difficulty: <span className={`font-bold ${question.difficulty === "hard" ? 'text-error' : question.difficulty === "medium" ? 'text-warning' : 'text-success'}`}>{question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1, question.difficulty.length)} {getGeneralEmojiByDifficulty(question.difficulty)}</span>
         </p>
-        <p className='my-5 text-md md:text-2xl lg:text-5xl font-bold'>{currentQuestionIndex + 1}. {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(question.question))}</p>
+        <p className='my-5 text-2xl md:text-2xl lg:text-5xl font-bold'>{currentQuestionIndex + 1}. {replaceHTMLEntitiesWithCharacters(replaceUnicodeCharacters(question.question))}</p>
         {
           question.img && question.img.includes('http') ?
             <img className='rounded-md max-h-[20rem]' src={question.img} alt={question.question} />
@@ -133,19 +142,20 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
       </div>
       {
         checkAnswers ?
-          <div className='w-[80%] h-auto grid grid-cols-2 md:grid-cols-4 gap-2 mt-5'>
+          <AnswersContainer>
             {question.all_answers.map((answer) => {
               return (
                 <div
                   className={`
                       ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "bg-error" : ""}
                       ${(answer === question.correct_answer) ? "bg-success" : ""}
+                      flex justify-center items-center
                       capitalize
                       overflow-hidden
-                      text-md md:text-2xl lg:text-3xl
-                      flex justify-center text-center
+                      text-md md:text-xl 
                       p-5
                       rounded-md
+                      bg-base-300
                     `}
                   key={answer}
                 >
@@ -153,9 +163,9 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
                 </div>
               )
             })}
-          </div>
+          </AnswersContainer>
           :
-          <div className='w-[80%] h-auto grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 justify-center items-stretch'>
+          <AnswersContainer>
             {question.all_answers.map((answer) => {
               if (q_and_a[currentQuestionIndex] === undefined) return (
                 <div
@@ -170,16 +180,19 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
                 <div
                   onClick={() => SelectQuestion(answer)}
                   className={
-                    `flex justify-center text-center 
-                    text-md md:text-2xl lg:text-3xl 
+                    `flex justify-center items-center
+                    text-md md:text-xl 
                     cursor-pointer 
                     overflow-hidden 
                     capitalize 
                     p-5 
                     rounded-md 
                     hover:bg-primary 
+                    hover:text-primary-content
+                    font-semibold
+                    bg-base-300
                     ${q_and_a[currentQuestionIndex].answerSelected === answer ?
-                      "bg-primary"
+                      "bg-primary text-primary-content"
                       :
                       "bg-base-100"
                     }
@@ -191,40 +204,48 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
                 </div>
               )
             })}
-          </div>
+          </AnswersContainer>
       }
-      {/* <br />
-      <hr className='h-2 w-[90%] bg-current'/> */}
+      <br />
+      <hr className='h-2 w-[90%] bg-current' />
     </div>
   )
 }
 
 
-function QuestionCardLoading({ question }: { question: Question }) {
+/* function QuestionCardLoading({ question }: { question: Question }) {
   return (
-    <div className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center bg-base-300 `}>
+    <div className={`min-w-full p-5 rounded-md flex flex-col justify-around items-center `}>
       <div className='animate-pulse flex flex-col w-[80%] justify-center items-center gap-2'>
-        <p className='text-md md:text-2xl'>■■■■■■■: <span>{question.category + '❓❔'}</span></p>
-        <p className={`text-md md:text-2xl`}>
-          ■■■■■■■■■■: <span className={`font-semibold text-primary`}>{question.difficulty}</span>
-        </p>
-        <p className='text-md md:text-2xl font-bold'>{question.question}</p>
+        <span className='bg-base-content h-5 w-[30%] rounded-md'></span>
+        <span className='bg-base-content h-5 w-[70%] rounded-md'></span>
+        <span className='bg-base-content h-5 w-[30%] rounded-md'></span>
+        <span className='bg-base-content h-[30%] w-[30%] rounded-md'></span>
       </div>
-      <div className='min-w-[100%] grid grid-cols-2 gap-2 mt-5'>
-        {question.all_answers.map((answer, index) => {
+      <AnswersContainer>
+        {question.all_answers.map((answer) => {
           return (
             <div
-              className={`btn btn-disabled overflow-hidden capitalize`}
-              key={index}
+              className={`
+                      flex justify-center items-center
+                      capitalize
+                      overflow-hidden
+                      text-md md:text-xl 
+                      p-5
+                      rounded-md
+                      bg-base-300
+                    `}
+              key={answer}
             >
-              {answer}
+              <span className='bg-base-content h-5 w-[30%] rounded-md'></span>
             </div>
           )
-        })}
-      </div>
+        })
+        }
+      </AnswersContainer>
     </div>
   )
-}
+} */
 
 
 export default Questions

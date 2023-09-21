@@ -2,9 +2,11 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { Category } from '../types';
 import { API_URL } from '../constants';
+import { useAuth } from '@clerk/clerk-react';
+import { REACT_QUERY_DEFAULT_PROPERTIES } from '../constants'
 
-
-function useCategoriesByUser(authToken: string) {
+function useCategoriesByUser(/* authToken: string */) {
+    const { getToken } = useAuth()
     return useQuery<Category[]>(
         'CategoriesUser',
         async () => {
@@ -12,20 +14,12 @@ function useCategoriesByUser(authToken: string) {
                 method: 'get',
                 maxBodyLength: Infinity,
                 url: `${API_URL}/api/v1/categories/user`,
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
+                headers: { 'Authorization': `Bearer ${await getToken()}`}
             };
             const response = await axios.request<Category[]>(config);
             return response.data;
         },
-        {
-            enabled: true,
-            refetchOnMount: true,
-            refetchOnReconnect: false,
-            refetchOnWindowFocus: false,
-            onError: (error) => console.log(error),
-        }
+        REACT_QUERY_DEFAULT_PROPERTIES
     );
 }
 
