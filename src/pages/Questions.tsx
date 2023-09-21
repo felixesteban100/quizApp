@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getEmojiByCategoryName, getGeneralEmojiByDifficulty, replaceHTMLEntitiesWithCharacters, replaceUnicodeCharacters } from '../functions';
 import { Question } from '../types'
-import { EMPTY_QUESTION } from '../constants';
+// import { EMPTY_QUESTION } from '../constants';
 import { useInView } from 'react-intersection-observer';
 import AnswersContainer from '../components/AnswersContainer';
 
@@ -14,7 +14,7 @@ type QuestionsProps = {
   amountOfQuestions: number
 }
 
-function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQuestions, amountOfQuestions }: QuestionsProps) {
+function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQuestions/* , amountOfQuestions */ }: QuestionsProps) {
   const [checkAnswers, setCheckAnswers] = useState<boolean>(false)
   const [q_and_a, setQ_and_a] = useState<Question[]>(questionsObtained)
 
