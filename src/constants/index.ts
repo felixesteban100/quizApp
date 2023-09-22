@@ -38,7 +38,7 @@ export const QUESTION_EMPTY: Question = {
 
 export const CLERK_THEME = {
     elements: {
-        formButtonPrimary: "bg-primary",
+        formButtonPrimary: "bg-primary text-primary-content hover:bg-primary-focus",
         button: "bg-base-100",
         card: 'bg-base-300',
         headerTitle: 'text-base-content',
@@ -50,7 +50,7 @@ export const CLERK_THEME = {
         formField__identifier: 'text-base-content',
         formFieldInput: 'bg-base-200 text-base-content border-base-content',
         footerActionText: 'text-base-content',
-        footerActionLink: 'text-primary',
+        footerActionLink: 'text-primary hover:text-primary-focus',
         userButtonPopoverCard: 'bg-base-100',
 
         userPreviewSecondaryIdentifier: 'text-base-content',

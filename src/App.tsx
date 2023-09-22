@@ -19,20 +19,12 @@ import { SignedIn, SignedOut, RedirectToSignIn, SignOutButton } from "@clerk/cle
 import { useAuth, useUser } from "@clerk/clerk-react";
 import SignInOwn from './pages/SignInOwn';
 
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-} from "@/components/ui/sheet"
-
+import { Sheet, SheetClose, SheetContent } from "@/components/ui/sheet"
 
 // add a timer if the user deceides 
 // add a explanation for the correct answer
 
 //improve the design of the questionsCards
-
-// imporve the themes of the clerk components to accept all the daisyui themes
-
 
 type Link = {
   to: string,
@@ -138,23 +130,6 @@ function App() {
         />
         <SheetContent data-theme={theme} side="left" className='bg-base-300 border-none menu p-4 text-base-content w-[45vw] md:w-[30vw] lg:w-[15rem]'>
           {
-            user ?
-              <li>
-                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>User</p>
-                <ul className="p-2 flex flex-col justify-start items-start gap-2">
-                  <div className='flex gap-5 items-center'>
-                    <img className='rounded-full h-10' src={user.imageUrl ?? ""} alt="user_image" />
-                    {user.firstName}
-                  </div>
-                  <SignOutButton>
-                    <div className='btn btn-primary normal-case'>Sign out</div>
-                  </SignOutButton>
-                </ul>
-              </li>
-              :
-              null
-          }
-          {
             !isSignedIn ?
               <li>
                 <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Quiz</p>
@@ -175,39 +150,48 @@ function App() {
           }
           {
             isSignedIn ?
-              <li>
-                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Question</p>
-                <ul className="p-2">
-                  {ROUTES_LOGIN.question.map((currentLinkQuestion) => {
-                    return (
-                      <li key={currentLinkQuestion.to}>
-                        <SheetClose asChild>
-                          <Link className='text-base sm:text-lg md:text-xl' to={currentLinkQuestion.to} >{currentLinkQuestion.tag}</Link>
-                        </SheetClose>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </li>
-              :
-              null
-          }
-          {
-            isSignedIn ?
-              <li>
-                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>Category</p>
-                <ul className="p-2">
-                  {ROUTES_LOGIN.category.map((currentLinkCategory) => {
-                    return (
-                      <li key={currentLinkCategory.to}>
-                        <SheetClose asChild>
-                          <Link className='text-base sm:text-lg md:text-xl' to={currentLinkCategory.to} >{currentLinkCategory.tag}</Link>
-                        </SheetClose>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </li>
+              <>
+                <li>
+                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>User</p>
+                  <ul className="p-2 flex flex-col justify-start items-start gap-2">
+                    <div className='flex gap-5 items-center'>
+                      <img className='rounded-full h-10' src={user?.imageUrl ?? ""} alt="user_image" />
+                      {user?.firstName}
+                    </div>
+                    <SignOutButton>
+                      <div className='btn btn-primary normal-case'>Sign out</div>
+                    </SignOutButton>
+                  </ul>
+                </li>
+                <li>
+                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Question</p>
+                  <ul className="p-2">
+                    {ROUTES_LOGIN.question.map((currentLinkQuestion) => {
+                      return (
+                        <li key={currentLinkQuestion.to}>
+                          <SheetClose asChild>
+                            <Link className='text-base sm:text-lg md:text-xl' to={currentLinkQuestion.to} >{currentLinkQuestion.tag}</Link>
+                          </SheetClose>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </li>
+                <li>
+                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>Category</p>
+                  <ul className="p-2">
+                    {ROUTES_LOGIN.category.map((currentLinkCategory) => {
+                      return (
+                        <li key={currentLinkCategory.to}>
+                          <SheetClose asChild>
+                            <Link className='text-base sm:text-lg md:text-xl' to={currentLinkCategory.to} >{currentLinkCategory.tag}</Link>
+                          </SheetClose>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </li>
+              </>
               :
               null
           }
@@ -221,9 +205,7 @@ function App() {
         />
         <Route
           path="/sign-in/*"
-          element={
-            <SignInOwn />
-          }
+          element={ <SignInOwn /> }
         />
         <Route
           path={"/questions"}

@@ -48,9 +48,10 @@ function Home({ /* currentUserName, */ allCategories, isLoadingCategories, isErr
     }
   }
 
+
   return (
     <div ref={sectionRef} className={`flex flex-col mx-auto justify-center items-center gap-8 py-10 ${sectionInView ? "animate-scaleInCenter" : "invisible"}`}>
-      <div className='flex flex-row justify-center items-center gap-5 w-[50%] max-w-[40rem] my-10'>
+      <div className='flex flex-row justify-center items-center gap-5 my-10'>
         <div className='text-5xl md:text-7xl lg:text-8xl animate-textShadowPopBr'>
           {/* Welcome <span className='font-bold'>{currentUserName?.split(" ")[0]}</span> */}
           Quizzical
