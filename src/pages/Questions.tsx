@@ -106,6 +106,7 @@ type QuestionCardProps = {
 function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, setQ_and_a }: QuestionCardProps) {
   const { ref: sectionRef, inView: sectionInView } = useInView({
     threshold: 0.2,
+    triggerOnce: true
   });
 
   function SelectQuestion(answerSelected: string) {
