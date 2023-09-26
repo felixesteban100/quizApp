@@ -17,7 +17,7 @@ function DeleteModal({
     return (
         <>
             <div
-                className={`w-[50%] mx-auto btn btn-error ${disabled ? "btn-disabled" : ""}`}
+                className={`normal-case w-[50%] mx-auto btn btn-error ${disabled ? "btn-disabled" : ""}`}
                 onClick={() => {
                     const modal = document.getElementById(modalId)
                     // @ts-ignore

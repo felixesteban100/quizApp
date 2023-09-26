@@ -36,9 +36,6 @@ function App() {
   const { user, isSignedIn: userExists } = useUser()
 
   const location = useLocation()
-  useEffect(() => {
-    refetchAllCategories()
-  }, [location])
 
   const [theme, setTheme] = useLocalStorage("QUIZZAPP_THEME", "dark")
   const [amountOfQuestions, setAmountOfQuestions] = useLocalStorage<number>('QUIZZAPP_AMOUNT_OF_QUESTIONS', 5)
@@ -77,7 +74,7 @@ function App() {
       },
   })
 
-  const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories, refetch: refetchAllCategories } = useQuery<Category[]>({
+  const { isLoading: isLoadingCategories, isError: isErrorCategories, data: allCategories, refetch: refetchAllCategories, isFetching: isFetchingCategories } = useQuery<Category[]>({
     ...REACT_QUERY_DEFAULT_PROPERTIES,
     enabled: (isSignedIn !== undefined && isLoaded),
     queryKey: ["Categories"],
@@ -102,6 +99,10 @@ function App() {
         return response.data
       },
   })
+
+  useEffect(() => {
+    refetchAllCategories()
+  }, [location])
 
   async function saveUser() {
     try {
@@ -128,43 +129,26 @@ function App() {
           theme={theme}
           setTheme={setTheme}
         />
-        <SheetContent data-theme={theme} side="left" className='bg-base-300 border-none menu p-4 text-base-content w-[45vw] md:w-[30vw] lg:w-[15rem]'>
-          {
-            !isSignedIn ?
-              <li>
-                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Quiz</p>
-                <ul className="p-2">
-                  {ROUTES_LOGOUT.page.map((currentLinkPage) => {
-                    return (
-                      <li key={currentLinkPage.to}>
-                        <SheetClose asChild>
-                          <Link className='text-base sm:text-lg md:text-xl ' to={currentLinkPage.to} >{currentLinkPage.tag}</Link>
-                        </SheetClose>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </li>
-              :
-              null
-          }
+        <SheetContent data-theme={theme} side="left" className='bg-base-300 border-none menu p-4 text-base-content w-[55vw] md:w-[35vw] lg:w-[20rem]'>
           {
             isSignedIn ?
               <>
                 <li>
-                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>User</p>
+                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>User 👤</p>
                   <ul className="p-2 flex flex-col justify-start items-start gap-2">
                     <div className='flex gap-5 items-center'>
                       <img className='rounded-full h-10' src={user?.imageUrl ?? ""} alt="user_image" />
                       {user?.firstName}
                     </div>
-                    <SignOutButton>
-                      <div className='btn btn-primary normal-case'>Sign out</div>
-                    </SignOutButton>
+                    <SheetClose >
+                      <SignOutButton>
+                        <div className='btn btn-primary normal-case'>Sign out</div>
+                      </SignOutButton>
+                    </SheetClose>
                   </ul>
                 </li>
                 <li>
-                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Question</p>
+                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Question ❓</p>
                   <ul className="p-2">
                     {ROUTES_LOGIN.question.map((currentLinkQuestion) => {
                       return (
@@ -178,7 +162,7 @@ function App() {
                   </ul>
                 </li>
                 <li>
-                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>Category</p>
+                  <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl'>Category 🗂️</p>
                   <ul className="p-2">
                     {ROUTES_LOGIN.category.map((currentLinkCategory) => {
                       return (
@@ -193,7 +177,20 @@ function App() {
                 </li>
               </>
               :
-              null
+              <li>
+                <p className='btn-disabled normal-case font-bold text-base sm:text-lg md:text-xl lg:text-2xl '>Quiz ❔</p>
+                <ul className="p-2">
+                  {ROUTES_LOGOUT.page.map((currentLinkPage) => {
+                    return (
+                      <li key={currentLinkPage.to}>
+                        <SheetClose asChild>
+                          <Link className='text-base sm:text-lg md:text-xl ' to={currentLinkPage.to} >{currentLinkPage.tag}</Link>
+                        </SheetClose>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </li>
           }
         </SheetContent>
       </Sheet>
@@ -201,11 +198,11 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Home currentUserName={user ? user?.fullName : ""} categoryId={categoryId} setCategoryId={setCategoryId} amountOfQuestions={amountOfQuestions} setAmountOfQuestions={setAmountOfQuestions} difficulty={difficulty} setDifficulty={setDifficulty} type={type} setType={setType} refetchQuestions={refetchQuestions} allCategories={allCategories} isLoadingCategories={isLoadingCategories} isErrorCategories={isErrorCategories} isLoading={isLoading} isFetching={isFetching} />}
+          element={<Home currentUserName={user ? user?.fullName : ""} categoryId={categoryId} setCategoryId={setCategoryId} amountOfQuestions={amountOfQuestions} setAmountOfQuestions={setAmountOfQuestions} difficulty={difficulty} setDifficulty={setDifficulty} type={type} setType={setType} refetchQuestions={refetchQuestions} allCategories={allCategories} isLoadingCategories={isLoadingCategories && isFetchingCategories} isErrorCategories={isErrorCategories} isLoading={isLoading} isFetching={isFetching} />}
         />
         <Route
           path="/sign-in/*"
-          element={ <SignInOwn /> }
+          element={<SignInOwn />}
         />
         <Route
           path={"/questions"}

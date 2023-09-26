@@ -13,6 +13,7 @@ import InputSelect from '../components/InputSelect';
 import ButtonSubmit from '../components/ButtonSubmit';
 import { useAuth } from '@clerk/clerk-react';
 import { getGeneralEmojiByDifficulty } from '../functions';
+import { useSearchParams } from 'react-router-dom';
 
 
 type PostQuestionProps = {
@@ -22,7 +23,19 @@ type PostQuestionProps = {
 function PostQuestion({ allCategories }: PostQuestionProps) {
   const { userId, getToken } = useAuth();
 
-  const [question, setQuestion] = useState<Question>({ ...QUESTION_EMPTY, createdBy: userId ?? "" });
+  const [searchParams, setSearchParams] = useSearchParams({ ...QUESTION_EMPTY, createdBy: userId ?? "" })
+
+  const question = {
+    question: searchParams.get("question") ?? "",
+    type: searchParams.get("type") ?? "multiple",
+    correct_answer: searchParams.get("type") ?? "",
+    incorrect_answers: JSON.parse(searchParams.get("incorrect_answers") ?? "[]") ,
+    category: searchParams.get("category") ?? "",
+    difficulty: searchParams.get("difficulty") ?? "",
+    img: searchParams.get("difficulty") ?? "",
+  }
+
+  // const [question, setQuestion] = useState<Question>({ ...QUESTION_EMPTY, createdBy: userId ?? "" });
 
   // change this for a react query
   const [error, setError] = useState("")
@@ -53,7 +66,8 @@ function PostQuestion({ allCategories }: PostQuestionProps) {
   }
 
   function handlerInputs(name: string, value: string, type: string, index?: number) {
-    handlerFunctionSetterQuestion(name, value, type, setQuestion, index)
+    // handlerFunctionSetterQuestion(name, value, type, setQuestion, index)
+    handlerFunctionSetterQuestion(name, value, type, setSearchParams, index)
   }
 
   return (

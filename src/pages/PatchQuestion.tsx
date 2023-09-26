@@ -15,6 +15,7 @@ import ButtonSubmit from '../components/ButtonSubmit';
 import SelectorApiCall from '../components/SelectorApiCall';
 import { useAuth } from '@clerk/clerk-react';
 import { getGeneralEmojiByDifficulty } from '../functions';
+import { useSearchParams } from 'react-router-dom';
 
 
 type PatchQuestionProps = {
@@ -29,7 +30,19 @@ function PatchQuestion({ allCategories, currentUserName }: PatchQuestionProps) {
 
     const [questionSelectedId, setQuestionSelectedId] = useState<string>("")
 
-    const [question, setQuestion] = useState<Question>({ ...QUESTION_EMPTY, createdBy: userId ?? "" });
+    // const [question, setQuestion] = useState<Question>({ ...QUESTION_EMPTY, createdBy: userId ?? "" });
+
+    const [searchParams, setSearchParams] = useSearchParams({ ...QUESTION_EMPTY, createdBy: userId ?? "" })
+
+    const question = {
+        question: searchParams.get("question") ?? "",
+        type: searchParams.get("type") ?? "multiple",
+        correct_answer: searchParams.get("type") ?? "",
+        incorrect_answers: JSON.parse(searchParams.get("incorrect_answers") ?? "[]"),
+        category: searchParams.get("category") ?? "",
+        difficulty: searchParams.get("difficulty") ?? "",
+        img: searchParams.get("img") ?? "",
+    }
 
     useEffect(() => {
         if (questionsByUser === undefined) return
@@ -38,7 +51,19 @@ function PatchQuestion({ allCategories, currentUserName }: PatchQuestionProps) {
             return acc
         }, QUESTION_EMPTY)
 
-        setQuestion(questionSelectedById)
+        // setQuestion(questionSelectedById)
+
+        // setSearchParams(JSON.stringify(questionSelectedById))
+        setSearchParams((prev) => {
+            prev.set("question", questionSelectedById.question)
+            prev.set("type", questionSelectedById.type)
+            prev.set("correct_answer", questionSelectedById.correct_answer)
+            prev.set("incorrect_answers", JSON.stringify(questionSelectedById.incorrect_answers))
+            prev.set("category", questionSelectedById.category)
+            prev.set("difficulty", questionSelectedById.difficulty)
+            prev.set("img", questionSelectedById.img)
+            return prev
+        })
     }, [questionSelectedId])
 
     // change this for a react query
@@ -64,7 +89,8 @@ function PatchQuestion({ allCategories, currentUserName }: PatchQuestionProps) {
     }
 
     function handlerInputs(name: string, value: string, type: string, index?: number) {
-        handlerFunctionSetterQuestion(name, value, type, setQuestion, index)
+        // handlerFunctionSetterQuestion(name, value, type, setQuestion, index)
+        handlerFunctionSetterQuestion(name, value, type, setSearchParams, index)
     }
 
     return (
@@ -143,7 +169,7 @@ function PatchQuestion({ allCategories, currentUserName }: PatchQuestionProps) {
                 name="difficulty"
                 value={question.difficulty}
                 handlerInputs={handlerInputs}
-                items={[{ value: 'easy', name: `Easy ${getGeneralEmojiByDifficulty("easy")}` }, { value: 'medium', name: `Medium ${getGeneralEmojiByDifficulty("medium")}` }, { value: 'hard', name: `Hard ${getGeneralEmojiByDifficulty("hard")}`   }]}
+                items={[{ value: 'easy', name: `Easy ${getGeneralEmojiByDifficulty("easy")}` }, { value: 'medium', name: `Medium ${getGeneralEmojiByDifficulty("medium")}` }, { value: 'hard', name: `Hard ${getGeneralEmojiByDifficulty("hard")}` }]}
             />
             <InputTextForm
                 label={'Image 🖼'}

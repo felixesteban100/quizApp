@@ -9,10 +9,16 @@ import FormComponent from '../components/FormComponent';
 import { handleInputChange, handleSubmit } from '../functions/formFunctions';
 import ButtonSubmit from '../components/ButtonSubmit';
 import { useAuth } from '@clerk/clerk-react';
+import { useSearchParams } from 'react-router-dom';
 
 function PostCategory() {
   const { getToken } = useAuth();
-  const [category, setCategory] = useState<Category>({ _id: "", name: "", id: 1 });
+
+  const [searchParams, setSearchParams] = useSearchParams({ _id: "", name: "", id: "1" })
+
+  const category = { _id: searchParams.get("_id") ?? "", name: searchParams.get("name") ?? "", id: searchParams.get("id") ?? "" }
+
+  // const [category, setCategory] = useState<Category>({ _id: "", name: "", id: 1 });
 
   // change this for a react query
   const [loading, setLoading] = useState(false)
@@ -39,7 +45,8 @@ function PostCategory() {
   }
 
   function handlerInputs(name: string, value: string) {
-    handleInputChange<typeof category>(name, value, setCategory)
+    // handleInputChange<typeof category>(name, value, setCategory)
+    handleInputChange(name, value, setSearchParams)
   }
 
   return (

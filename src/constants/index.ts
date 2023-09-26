@@ -63,10 +63,10 @@ export const CLERK_THEME = {
     }
 }
 
-export const ROUTES_LOGOUT = { page: [{ to: '/', tag: 'Home' }, { to: '/sign-in', tag: 'Login' }] }
+export const ROUTES_LOGOUT = { page: [{ to: '/', tag: 'Home 🏠' }, { to: '/sign-in', tag: 'Login 👤' }] }
 
 export const ROUTES_LOGIN = {
-    page: [{ to: '/', tag: 'Home' },],
-    question: [{ to: '/postquestion', tag: 'Post Question' }, { to: '/patchquestion', tag: 'Patch Question' }, { to: '/deletequestion', tag: 'Delete Question' }],
-    category: [{ to: '/postcategory', tag: 'Post Category' }, { to: '/deletecategory', tag: 'Delete Category' }],
+    page: [{ to: '/', tag: 'Home 🏠' },],
+    question: [{ to: '/postquestion', tag: 'Post Question 💾' }, { to: '/patchquestion', tag: 'Patch Question ✏️' }, { to: '/deletequestion', tag: 'Delete Question 🗑️' }],
+    category: [{ to: '/postcategory', tag: 'Post Category 💾' }, { to: '/deletecategory', tag: 'Delete Category 🗑️' }],
 }

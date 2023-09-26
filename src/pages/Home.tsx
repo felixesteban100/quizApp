@@ -31,17 +31,19 @@ function Home({ /* currentUserName, */ allCategories, isLoadingCategories, isErr
   });
 
   function handlerInputs(toChange: string, value: string) {
+    if (typeof value !== 'string') return
+
     switch (toChange) {
       case "type":
-        if (typeof value === 'string') setType(value)
+        setType(value)
         break;
 
       case "difficulty":
-        if (typeof value === 'string') setDifficulty(value)
+        setDifficulty(value)
         break;
 
       case "category":
-        if (typeof value === 'string') setCategoryId(parseInt(value))
+        setCategoryId(parseInt(value))
         break;
 
       default: break;
@@ -84,7 +86,7 @@ function Home({ /* currentUserName, */ allCategories, isLoadingCategories, isErr
       </label>
 
       {
-        isLoadingCategories
+        isLoadingCategories === true
           ? <span className="loading loading-dots loading-lg"></span>
           : allCategories !== undefined && !isErrorCategories
             ? <SelectComponent

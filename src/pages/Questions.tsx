@@ -4,6 +4,7 @@ import { Question } from '../types'
 // import { EMPTY_QUESTION } from '../constants';
 import { useInView } from 'react-intersection-observer';
 import AnswersContainer from '../components/AnswersContainer';
+import { Link } from 'react-router-dom';
 
 type QuestionsProps = {
   questionsObtained: Question[];
@@ -72,16 +73,27 @@ function Questions({ questionsObtained, isLoading, isFetching, isError, refetchQ
                       })}
                       {
                         checkAnswers ?
-                          <div className='flex justify-center items-center gap-5'>
+                          <div className='flex flex-col md:flex-row justify-center items-center gap-5'>
                             <div className='text-2xl capitalize'>
                               Correct answers: {getCorrectAnswers()}/{questionsObtained.length}
                             </div>
-                            <div className='btn capitalize' onClick={() => {
-                              window.scrollTo(0, 0)
-                              setTimeout(() => {
-                                refetchQuestions()
-                              }, 1000)
-                            }}>More Questions</div>
+                            <div className='flex flex-row justify-center items-center gap-5'>
+                              <div className='btn capitalize btn-primary' onClick={() => {
+                                window.scrollTo(0, 0)
+                                setTimeout(() => {
+                                  refetchQuestions()
+                                }, 1000)
+                              }}
+                              >
+                                More Questions
+                              </div>
+                              <Link
+                                className='btn  capitalize'
+                                to="/"
+                              >
+                                Return home page
+                              </Link>
+                            </div>
                           </div>
                           :
                           <div className={`btn capitalize text-2xl p-5 h-fit`} onClick={() => setCheckAnswers(true)}>Check Answers</div>
@@ -148,8 +160,8 @@ function QuestionCard({ checkAnswers, question, currentQuestionIndex, q_and_a, s
               return (
                 <div
                   className={`
-                      ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "bg-error" : ""}
-                      ${(answer === question.correct_answer) ? "bg-success" : ""}
+                      ${(q_and_a[currentQuestionIndex].answerSelected === answer && answer !== question.correct_answer) ? "bg-error text-error-content" : ""}
+                      ${(answer === question.correct_answer) ? "bg-success text-success-content" : ""}
                       flex justify-center items-center
                       capitalize
                       overflow-hidden
